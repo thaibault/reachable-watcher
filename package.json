@@ -1,7 +1,14 @@
+{
   "name": "isWebServerReachableWatcher",
   "version": "1.0.0",
   "description": "Check status codes of web servers and sends notification e-mails",
   "documentationWebsite": {
     "analyticsCode": "TODO"
   },
-
+    "scripts": {
+        "updateDocumentation": "documentationWebsite"
+    },
+    "devDependencies": {
+        "documentation-website": "latest"
+    }
+}

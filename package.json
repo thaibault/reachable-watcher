@@ -6,7 +6,7 @@
     "analyticsCode": "TODO"
   },
     "scripts": {
-        "updateDocumentation": "documentationWebsite"
+        "updateDocumentation": "documentationWebsite --log-level info"
     },
     "devDependencies": {
         "documentation-website": "latest"

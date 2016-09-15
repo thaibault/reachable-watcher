@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# C extensions
-*.so
+# Generated documentations
+documentation/build
+api
+apiDocumentation/
 
-## Generic
+# Generated runtime bytecode files.
+__pycache__
+*.py[cod]
 
-# Ignore profiling data.
+# Temporary compile files
+*.compiled.*
+*.compiled
+.dynamicConfiguration-*.json
+*.dll-manifest.json
+
+# Profiling data.
 *.profile
 
 # Packages
@@ -23,9 +33,6 @@ develop-eggs
 lib
 lib64
 .sass-cache
-
-# Ignore npm generated debug informations.
-npm-debug.log
 
 # Ignore docker nested bash generated files.
 /.bash_history
@@ -58,17 +65,20 @@ nosetests.xml
 # Gedit autosave backups.
 *~
 
+# Temporary fuse files
+**/.fuse_hidden*
+
 # Temporary windows files
 *Thumbs.db
 
 # Node Modules
 node_modules/
 .npm/
-v8flags.*
+.v8flags.*
 /.cache
 /.config
 .npm-debug.log
-*.compiled.*
+npm-debug.log
 
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:

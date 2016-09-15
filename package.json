@@ -4,7 +4,7 @@
   "description": "Check status codes of web servers and sends notification e-mails",
   "documentationWebsite": {
     "name": "reachableWatcher",
-    "analyticsCode": "UA-40192634-15"
+    "trackingCode": "UA-40192634-15"
   },
     "scripts": {
         "updateDocumentation": "documentationWebsite --log-level info"

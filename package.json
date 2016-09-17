@@ -6,6 +6,7 @@
     "name": "reachableWatcher",
     "trackingCode": "UA-40192634-15"
   },
+    "files": ["reachableWatcher.service"],
     "main": "reachableWatcher.sh",
     "scripts": {
         "updateDocumentation": "documentationWebsite --log-level info"

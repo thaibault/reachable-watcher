@@ -1,25 +1,13 @@
 {
   "name": "reachable-watcher",
   "version": "1.0.0",
+  "license": "CC-BY-3.0",
   "description": "Check status codes of web servers and sends notification e-mails",
+  "homepage": "http://torben.website/reachableWatcher",
   "documentationWebsite": {
     "name": "reachableWatcher",
     "trackingCode": "UA-40192634-15"
   },
-    "files": ["reachableWatcher.service"],
-    "main": "reachableWatcher.sh",
-    "scripts": {
-        "update": "npm version patch && npm publish",
-        "updateDocumentation": "documentationWebsite --log-level info",
-        "lint": "shellcheck reachableWatcher.sh"
-    },
-    "devDependencies": {
-        "documentation-website": "latest"
-    },
-      "repository": {
-        "type": "git",
-        "url": "https://github.com/thaibault/reachableWatcher"
-      },
   "keywords": [
     "reachable",
     "watcher",
@@ -29,7 +17,20 @@
     "checker",
     "online"
   ],
-  "homepage": "http://torben.website/reachableWatcher",
-
-  "license": "CC-BY-3.0"
+  "files": [
+    "reachableWatcher.service"
+  ],
+  "main": "reachableWatcher.sh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thaibault/reachableWatcher"
+  },
+  "scripts": {
+    "update": "npm version patch && npm publish",
+    "updateDocumentation": "documentationWebsite --log-level info",
+    "lint": "shellcheck reachableWatcher.sh"
+  },
+  "devDependencies": {
+    "documentation-website": "latest"
+  }
 }

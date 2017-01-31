@@ -8,18 +8,10 @@ apiDocumentation/
 # Generated runtime bytecode files.
 __pycache__
 *.py[cod]
-***/*.ngfactory.ts
-
-# Runtime data
-database
-log.txt
 
 # Temporary compile files
 *.compiled.*
 *.compiled
-!/api/**/*
-*Bundle.*
-!/data/**/*
 .dynamicConfiguration-*.json
 *.dll-manifest.json
 
@@ -27,7 +19,6 @@ log.txt
 *.profile
 
 # Packages
-.SRCINFO
 *.egg
 *.egg-info
 dist
@@ -80,9 +71,7 @@ nosetests.xml
 # Temporary windows files
 *Thumbs.db
 
-# NPM/yarn's runtime files
-yarn-error.log
-yarn.lock
+# Node Modules
 node_modules/
 .npm/
 .v8flags.*

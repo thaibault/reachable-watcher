@@ -26,9 +26,9 @@
     "url": "https://github.com/thaibault/reachableWatcher"
   },
   "scripts": {
+    "lint": "shellcheck reachableWatcher.sh",
     "update": "npm version patch && npm publish",
-    "updateDocumentation": "documentationWebsite --log-level info",
-    "lint": "shellcheck reachableWatcher.sh"
+    "update:documentation": "documentationWebsite --log-level info"
   },
   "devDependencies": {
     "documentation-website": "latest"

@@ -27,6 +27,7 @@
   },
   "scripts": {
     "lint": "shellcheck reachableWatcher.sh",
+    "test": "npm run lint",
     "update": "npm version patch && npm publish",
     "update:documentation": "documentationWebsite --log-level info"
   },

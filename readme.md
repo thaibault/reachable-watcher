@@ -1,8 +1,6 @@
 <!-- #!/usr/bin/env markdown
--*- coding: utf-8 -*- -->
-
-<!-- region header
-
+-*- coding: utf-8 -*-
+region header
 Copyright Torben Sickert 16.12.2012
 
 License
@@ -10,7 +8,6 @@ License
 
 This library written by Torben Sickert stand under a creative commons naming
 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
-
 endregion -->
 
 [![Build Status](https://travis-ci.org/thaibault/reachableWatcher.svg?branch=master)](https://travis-ci.org/thaibault/reachableWatcher)
@@ -49,7 +46,7 @@ reachable-watcher
 Configuration
 -------------
 
-Simply edi t the constants region of the provided shell script.
+Simply edit the constants region of the provided shell script.
 
 Installation (under systemd)
 ----------------------------

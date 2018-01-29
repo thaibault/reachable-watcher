@@ -8,93 +8,139 @@
 
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
-
-# Watches a list of urls and sends mails to configured email addresses if one
-# doesn't fit the expected status code.
-
-# Dependencies:
-
-# - bash (or any bash like shell)
-# - curl - Transfers a url contents.
-# - date - Print or set the system date and time.
-# - grep - Print lines matching a pattern.
-# - msmtp - An SMTP client.
-# - sleep - Delay for a specified amount of time.
-
-# You have to install program "msmtp" to get this script working. A proper user
-# specific "~/.msmtprc" or global "/etc/msmtprc" have to be present on wating
-# distribution. A sample configuration using simple gmail account to send
-# mails (Replace "ACCOUNT_NAME", "ACCOUNT_E_MAIL_ADDRESS",
-# "ACCOUNT_PASSWORD", "RECIPIENT_E_MAIL_ADDRESS", "URL1" and remove or edit
-# "URL2", "NODE_NAME" and "ANOTHER_RECIPIENT_E_MAIL_ADDRESS"):
-
-# defaults
-# auth           on
-# tls            on
-# tls_starttls   on
-# tls_trust_file /etc/ssl/certs/ca-certificates.crt
-# logfile        /tmp/msmtpLog
-
-# account        gmail
-# host           smtp.gmail.com
-# port           587
-# from           ACCOUNT_E_MAIL_ADDRESS
-# user           ACCOUNT_NAME@gmail.com
-# password       ACCOUNT_PASSWORD
-
-# account        default : gmail
 # endregion
-# region default options
-# Example:
-# declare -A urls_to_check=(
-#     ['URL1']='200 RECIPIENT_E_MAIL_ADDRESS' \
-#     ['URL2']='200 RECIPIENT_E_MAIL_ADDRESS ANOTHER_RECIPIENT_E_MAIL_ADDRESS')
-declare -A urls_to_check=()
-# Wait for 5 minutes (60 * 5 = 300)
-delay_between_two_consequtive_requests_in_seconds='300'
-date_time_format='%T:%N at %d.%m.%Y'
-sender_e_mail_address='ACCOUNT_E_MAIL_ADDRESS'
-replier_e_mail_address="$sender_e_mail_address"
-verbose=false
-name='NODE_NAME'
-# endregion
-# region load options if present
-if [ -f /etc/reachableWatcher ]; then
-    source /etc/reachableWatcher
+# shellcheck disable=SC1004,SC2016,SC2155
+# region import
+if [[ -f "$(dirname "${BASH_SOURCE[0]}")node_modules/bashlink/module.sh" ]]; then
+    # shellcheck disable=SC1090
+    source "$(dirname "${BASH_SOURCE[0]}")node_modules/bashlink/module.sh"
+elif [[ -f "/usr/lib/bashlink/module.sh" ]]; then
+    # shellcheck disable=SC1091
+    source "/usr/lib/bashlink/module.sh"
 fi
+bl.module.import bashlink.logging
+bl.module.import bashlink.tools
 # endregion
-# region controller
-while true; do
-    for url_to_check in "${!urls_to_check[@]}"; do
-        expected_status_code="$(echo "${urls_to_check[$url_to_check]}" | grep \
-            '^[^ ]+' --only-matching --extended-regexp)"
-        $verbose && echo \
-            "Check url \"$url_to_check\" for status code $expected_status_code."
-        current_status_code="$(curl --insecure --output /dev/null --silent \
-            --head --write-out '%{http_code}' "$url_to_check")"
-        if [[ "$current_status_code" != "$expected_status_code" ]]; then
-            message="Requested URL \"$url_to_check\" returns status code $current_status_code (instead of \"$expected_status_code\") on $(date +"$date_time_format")."
-            for e_mail_address in $(echo "${urls_to_check[$url_to_check]}" | \
-                grep ' .+$' --only-matching --extended-regexp)
-            do
-                $verbose && echo "$message" >/dev/stderr
-                msmtp -t <<EOF
-From: $sender_e_mail_address
-To: $e_mail_address
-Reply-To: $replier_e_mail_address
-Date: $(date)
-Subject: $name registers: "$url_to_check" responses with status code $current_status_code!
+# region variables
+# shellcheck disable=SC2034
+reachableWatcher__dependencies__=(
+    bash
+    curl
+    date
+    grep
+    msmtp
+    sleep
+)
+# shellcheck disable=SC2034,SC2016
+reachableWatcher__documentation__='
+    Watches a list of urls and sends mails to configured email addresses if one
+    does not fit the expected status code.
 
-$message
+    You have to install program `msmtp` to get this script working. A proper
+    user specific "~/.msmtprc" or global "/etc/msmtprc" have to be present on
+    your distribution. A sample configuration using simple gmail account to
+    send mails (Replace "ACCOUNT_NAME", "ACCOUNT_E_MAIL_ADDRESS",
+    "ACCOUNT_PASSWORD"):
 
-EOF
-            done
-        fi
+    ```
+        defaults
+        auth           on
+        tls            on
+        tls_starttls   on
+        tls_trust_file /etc/ssl/certs/ca-certificates.crt
+        logfile        /tmp/msmtpLog
+
+        account        gmail
+        host           smtp.gmail.com
+        port           587
+        from           ACCOUNT_E_MAIL_ADDRESS
+        user           ACCOUNT_NAME@gmail.com
+        password       ACCOUNT_PASSWORD
+
+        account        default : gmail
+    ```
+
+    Furthermore you should create a file "/etc/reachableWatcher" to overwrite
+    the following variables. You need to set values for
+    `reachableWatcher_urls_to_check` and
+    `reachableWatcher_sender_e_mail_address` at least:
+
+    ```bash
+        reachableWatcher_sender_e_mail_address="ACCOUNT_E_MAIL_ADDRESS"
+        declare -A reachableWatcher_urls_to_check=(
+            ["URL1"]="200 RECIPIENT_E_MAIL_ADDRESS"
+            ["URL2"]="200 RECIPIENT_E_MAIL_ADDRESS ANOTHER_RECIPIENT_E_MAIL_ADDRESS"
+            ...
+        )
+    ```
+'
+## region default options
+declare -A reachableWatcher_urls_to_check=()
+# Wait for 5 minutes (60 * 5 = 300).
+reachableWatcher_delay_between_two_consequtive_requests_in_seconds=300
+reachableWatcher_date_time_format='%T:%N at %d.%m.%Y'
+reachableWatcher_sender_e_mail_address=''
+reachableWatche_replier_e_mail_address="$sender_e_mail_address"
+reachableWatcher_verbose=false
+reachableWatcher_name=NODE_NAME
+## endregion
+## region load options if present
+if [ -f /etc/reachableWatcher ]; then
+    bl.module.import /etc/reachableWatcher
+fi
+## endregion
+# endregion
+# region functions
+## region controller
+alias reachableWatcher.main=reachableWatcher_main
+reachableWatcher_main() {
+    while true; do
+        local url_to_check
+        for url_to_check in "${!reachableWatcher_urls_to_check[@]}"; do
+            local expected_status_code="$(
+                echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                    grep '^[^ ]+' --only-matching --extended-regexp)"
+            $reachableWatcher_verbose && \
+                echo "Check url \"$url_to_check\" for status code $expected_status_code."
+            local given_status_code="$(
+                curl \
+                    --head \
+                    --insecure \
+                    --output /dev/null \
+                    --silent \
+                    --write-out '%{http_code}' \
+                    "$url_to_check"
+            )"
+            if [[ "$given_status_code" != "$expected_status_code" ]]; then
+                local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$reachableWatcher_date_time_format")."
+                for e_mail_address in $(
+                    echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                        grep ' .+$' --only-matching --extended-regexp)
+                do
+                    $reachableWatcher_verbose && \
+                        echo "$message" >/dev/stderr
+                    msmtp -t <<EOF
+    From: $reachableWatcher_sender_e_mail_address
+    To: $reachableWatcher_e_mail_address
+    Reply-To: $reachableWatche_replier_e_mail_address
+    Date: $(date)
+    Subject: $reachableWatcher_name registers: "$url_to_check" responses with status code $given_status_code!
+
+    $message
+
+    EOF
+                done
+            fi
+        done
+        $reachableWatcher_verbose && echo "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."
+        sleep "$reachableWatcher_delay_between_two_consequtive_requests_in_seconds"
     done
-    $verbose && echo "Wait for $delay_between_two_consequtive_requests_in_seconds seconds until next check."
-    sleep "$delay_between_two_consequtive_requests_in_seconds"
-done
+}
+## endregion
 # endregion
+if bl.tools.is_main; then
+    reachableWatcher.main "$@"
+fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:
 # vim: foldmethod=marker foldmarker=region,endregion:

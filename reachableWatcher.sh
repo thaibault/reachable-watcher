@@ -138,14 +138,14 @@ reachableWatcher_main() {
                         echo "$message" >/dev/stderr
                     msmtp -t <<EOF
     From: $reachableWatcher_sender_e_mail_address
-    To: $reachableWatcher_e_mail_address
+    To: $e_mail_address
     Reply-To: $reachableWatche_replier_e_mail_address
     Date: $(date)
     Subject: $reachableWatcher_name registers: "$url_to_check" responses with status code $given_status_code!
 
     $message
 
-    EOF
+EOF
                 done
             fi
         done

@@ -108,6 +108,11 @@ fi
 ## region controller
 alias reachableWatcher.main=reachableWatcher_main
 reachableWatcher_main() {
+    local __documentation__='
+        Main entry point.
+    '
+    $backupRotation_verbose && \
+        bl.logging.set_level info
     while true; do
         local url_to_check
         for url_to_check in "${!reachableWatcher_urls_to_check[@]}"; do

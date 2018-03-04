@@ -129,7 +129,7 @@ reachableWatcher_main() {
                     --write-out '%{http_code}' \
                     "$url_to_check"
             )"
-            if [[ "$given_status_code" != "$expected_status_code" ]]; then
+            if (( given_status_code != expected_status_code )); then
                 local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$reachableWatcher_date_time_format")."
                 local e_main_address
                 for e_mail_address in $(
@@ -140,7 +140,7 @@ reachableWatcher_main() {
                     msmtp -t <<EOF
     From: $reachableWatcher_sender_e_mail_address
     To: $e_mail_address
-    Reply-To: $reachableWatche_replier_e_mail_address
+    Reply-To: $reachableWatcher_replier_e_mail_address
     Date: $(date)
     Subject: $reachableWatcher_name registers: "$url_to_check" responses with status code $given_status_code!
 

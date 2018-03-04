@@ -100,6 +100,7 @@ reachableWatcher_name=NODE_NAME
 ## endregion
 ## region load options if present
 if [ -f /etc/reachableWatcher ]; then
+    # shellcheck disable=SC1091
     source /etc/reachableWatcher
 fi
 ## endregion
@@ -111,7 +112,7 @@ reachableWatcher_main() {
     local __documentation__='
         Main entry point.
     '
-    $backupRotation_verbose && \
+    $reachableWatcher_verbose && \
         bl.logging.set_level info
     while true; do
         local url_to_check

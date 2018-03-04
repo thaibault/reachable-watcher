@@ -138,13 +138,13 @@ reachableWatcher_main() {
                 do
                     bl.logging.info "$message"
                     msmtp -t <<EOF
-    From: $reachableWatcher_sender_e_mail_address
-    To: $e_mail_address
-    Reply-To: $reachableWatcher_replier_e_mail_address
-    Date: $(date)
-    Subject: $reachableWatcher_name registers: "$url_to_check" responses with status code $given_status_code!
+From: $reachableWatcher_sender_e_mail_address
+To: $e_mail_address
+Reply-To: $reachableWatcher_replier_e_mail_address
+Date: $(date)
+Subject: $reachableWatcher_name registers: "$url_to_check" responses with status code $given_status_code!
 
-    $message
+$message
 
 EOF
                 done

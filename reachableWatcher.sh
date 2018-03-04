@@ -20,9 +20,6 @@ elif [ -f "/usr/lib/bashlink/module.sh" ]; then
 else
     reachableWatcher_bashlink_path="$(mktemp --directory --suffix -reachable-watcher-bashlink)/bashlink/"
     mkdir "$reachableWatcher_bashlink_path"
-    echo wget \
-        https://goo.gl/UKF5JG \
-        --output-document "${reachableWatcher_bashlink_path}module.sh"
     if wget \
         https://goo.gl/UKF5JG \
         --output-document "${reachableWatcher_bashlink_path}module.sh"
@@ -117,8 +114,7 @@ reachableWatcher_main() {
             local expected_status_code="$(
                 echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
                     grep '^[^ ]+' --only-matching --extended-regexp)"
-            $reachableWatcher_verbose && \
-                echo "Check url \"$url_to_check\" for status code $expected_status_code."
+            bl.logging.info "Check url \"$url_to_check\" for status code $expected_status_code."
             local given_status_code="$(
                 curl \
                     --head \
@@ -135,8 +131,7 @@ reachableWatcher_main() {
                     echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
                         grep ' .+$' --only-matching --extended-regexp)
                 do
-                    $reachableWatcher_verbose && \
-                        echo "$message" >/dev/stderr
+                    bl.logging.info "$message"
                     msmtp -t <<EOF
     From: $reachableWatcher_sender_e_mail_address
     To: $e_mail_address
@@ -150,7 +145,7 @@ EOF
                 done
             fi
         done
-        $reachableWatcher_verbose && echo "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."
+        bl.logging.info "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."
         sleep "$reachableWatcher_delay_between_two_consequtive_requests_in_seconds"
     done
 }

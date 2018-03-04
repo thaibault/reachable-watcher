@@ -97,7 +97,7 @@ declare -A reachableWatcher_urls_to_check=()
 reachableWatcher_delay_between_two_consequtive_requests_in_seconds=300
 reachableWatcher_date_time_format='%T:%N at %d.%m.%Y'
 reachableWatcher_sender_e_mail_address=''
-reachableWatche_replier_e_mail_address="$sender_e_mail_address"
+reachableWatcher_replier_e_mail_address="$reachableWatcher_sender_e_mail_address"
 reachableWatcher_verbose=false
 reachableWatcher_name=NODE_NAME
 ## endregion

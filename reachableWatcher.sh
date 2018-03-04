@@ -130,6 +130,7 @@ reachableWatcher_main() {
             )"
             if [[ "$given_status_code" != "$expected_status_code" ]]; then
                 local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$reachableWatcher_date_time_format")."
+                local e_main_address
                 for e_mail_address in $(
                     echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
                         grep ' .+$' --only-matching --extended-regexp)

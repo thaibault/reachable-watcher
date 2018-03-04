@@ -9,20 +9,38 @@
 # This library written by Torben Sickert stand under a creative commons naming
 # 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
-# shellcheck disable=SC1004,SC2016,SC2155
+# shellcheck disable=SC1004,SC2016,SC2034,SC2155
 # region import
-if [[ -f "$(dirname "${BASH_SOURCE[0]}")node_modules/bashlink/module.sh" ]]; then
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
     # shellcheck disable=SC1090
-    source "$(dirname "${BASH_SOURCE[0]}")node_modules/bashlink/module.sh"
-elif [[ -f "/usr/lib/bashlink/module.sh" ]]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
+elif [ -f "/usr/lib/bashlink/module.sh" ]; then
     # shellcheck disable=SC1091
     source "/usr/lib/bashlink/module.sh"
+else
+    reachableWatcher_bashlink_path="$(mktemp --directory --suffix -reachable-watcher-bashlink)/bashlink/"
+    mkdir "$reachableWatcher_bashlink_path"
+    echo wget \
+        https://goo.gl/UKF5JG \
+        --output-document "${reachableWatcher_bashlink_path}module.sh"
+    if wget \
+        https://goo.gl/UKF5JG \
+        --output-document "${reachableWatcher_bashlink_path}module.sh"
+    then
+        bl_module_retrieve_remote_modules=true
+        # shellcheck disable=SC1090
+        source "${reachableWatcher_bashlink_path}/module.sh"
+    else
+        echo Needed bashlink library not found 1>&2
+        rm --force --recursive "$reachableWatcher_bashlink_path"
+        exit 1
+    fi
 fi
+bl.module.import bashlink.exception
 bl.module.import bashlink.logging
 bl.module.import bashlink.tools
 # endregion
 # region variables
-# shellcheck disable=SC2034
 reachableWatcher__dependencies__=(
     bash
     curl
@@ -31,7 +49,6 @@ reachableWatcher__dependencies__=(
     msmtp
     sleep
 )
-# shellcheck disable=SC2034,SC2016
 reachableWatcher__documentation__='
     Watches a list of urls and sends mails to configured email addresses if one
     does not fit the expected status code.
@@ -86,7 +103,7 @@ reachableWatcher_name=NODE_NAME
 ## endregion
 ## region load options if present
 if [ -f /etc/reachableWatcher ]; then
-    bl.module.import /etc/reachableWatcher
+    source /etc/reachableWatcher
 fi
 ## endregion
 # endregion
@@ -139,7 +156,24 @@ reachableWatcher_main() {
 ## endregion
 # endregion
 if bl.tools.is_main; then
-    reachableWatcher.main "$@"
+    bl.exception.activate
+    bl.exception.try
+        reachableWatcher.main "$@"
+    bl.exception.catch_single
+    {
+        [ -d "$reachableWatcher_bashlink_path" ] && \
+            rm --recursive "$reachableWatcher_bashlink_path"
+        # shellcheck disable=SC2154
+        [ -d "$bl_module_remote_module_cache_path" ] && \
+            rm --recursive "$bl_module_remote_module_cache_path"
+        # shellcheck disable=SC2154
+        bl.logging.error "$bl_exception_last_traceback"
+    }
+    [ -d "$reachableWatcher_bashlink_path" ] && \
+        rm --recursive "$reachableWatcher_bashlink_path"
+    # shellcheck disable=SC2154
+    [ -d "$bl_module_remote_module_cache_path" ] && \
+        rm --recursive "$bl_module_remote_module_cache_path"
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:

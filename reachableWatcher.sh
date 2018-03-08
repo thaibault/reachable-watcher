@@ -130,7 +130,29 @@ reachableWatcher_main() {
                     --write-out '%{http_code}' \
                     "$url_to_check"
             )"
-            if (( given_status_code != expected_status_code )); then
+            if (( given_status_code == expected_status_code )); then
+                if [ "$(bl.dictionary.get state "$url_to_check")" = invalid ]; then
+                    local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$reachableWatcher_date_time_format")."
+                    local e_main_address
+                    for e_mail_address in $(
+                        echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                            grep ' .+$' --only-matching --extended-regexp)
+                    do
+                        bl.logging.info "$message"
+                        msmtp -t <<EOF
+From: $reachableWatcher_sender_e_mail_address
+To: $e_mail_address
+Reply-To: $reachableWatcher_replier_e_mail_address
+Date: $(date)
+Subject: $reachableWatcher_name registers: "$url_to_check" responses with valid status code $given_status_code.
+
+$message
+
+EOF
+                    done
+                    bl.dictionary.set state "$url_to_check" valid
+                fi
+            elif [ "$(bl.dictionary.get state "$url_to_check")" = valid ]; then
                 local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$reachableWatcher_date_time_format")."
                 local e_main_address
                 for e_mail_address in $(
@@ -143,12 +165,13 @@ From: $reachableWatcher_sender_e_mail_address
 To: $e_mail_address
 Reply-To: $reachableWatcher_replier_e_mail_address
 Date: $(date)
-Subject: $reachableWatcher_name registers: "$url_to_check" responses with status code $given_status_code!
+Subject: $reachableWatcher_name registers: "$url_to_check" responses with invalid status code $given_status_code!
 
 $message
 
 EOF
                 done
+                bl.dictionary.set state "$url_to_check" invalid
             fi
         done
         bl.logging.info "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."

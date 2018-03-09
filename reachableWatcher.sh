@@ -33,6 +33,7 @@ else
         exit 1
     fi
 fi
+bl.module.import bashlink.dictionary
 bl.module.import bashlink.exception
 bl.module.import bashlink.logging
 bl.module.import bashlink.tools
@@ -105,6 +106,7 @@ if [ -f /etc/reachableWatcher ]; then
 fi
 ## endregion
 # endregion
+reachableWatcher_delay_between_two_consequtive_requests_in_seconds=10
 # region functions
 ## region controller
 alias reachableWatcher.main=reachableWatcher_main
@@ -120,7 +122,7 @@ reachableWatcher_main() {
             local expected_status_code="$(
                 echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
                     grep '^[^ ]+' --only-matching --extended-regexp)"
-            bl.logging.info "Check url \"$url_to_check\" for status code $expected_status_code."
+            bl.logging.debug "Check url \"$url_to_check\" for status code $expected_status_code."
             local given_status_code="$(
                 curl \
                     --head \
@@ -130,15 +132,18 @@ reachableWatcher_main() {
                     --write-out '%{http_code}' \
                     "$url_to_check"
             )"
+            local normalized_url_to_check="$(
+                echo "$url_to_check" | sed 's/[:/.]/_/g')"
             if (( given_status_code == expected_status_code )); then
-                if [ "$(bl.dictionary.get state "$url_to_check")" = invalid ]; then
-                    local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$reachableWatcher_date_time_format")."
+                local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$reachableWatcher_date_time_format")."
+                bl.logging.debug "$message"
+                if [ "$(bl.dictionary.get state "$normalized_url_to_check")" = invalid ]; then
+                    bl.logging.info "Status has changed to \"valid\" for \"$url_to_check\". Do notification."
                     local e_main_address
                     for e_mail_address in $(
                         echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
                             grep ' .+$' --only-matching --extended-regexp)
                     do
-                        bl.logging.info "$message"
                         msmtp -t <<EOF
 From: $reachableWatcher_sender_e_mail_address
 To: $e_mail_address
@@ -150,17 +155,24 @@ $message
 
 EOF
                     done
-                    bl.dictionary.set state "$url_to_check" valid
+                    bl.dictionary.set state "$normalized_url_to_check" valid
+                else
+                    bl.logging.debug "Status unchanged."
                 fi
-            elif [ "$(bl.dictionary.get state "$url_to_check")" = valid ]; then
+            else
                 local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$reachableWatcher_date_time_format")."
-                local e_main_address
-                for e_mail_address in $(
-                    echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
-                        grep ' .+$' --only-matching --extended-regexp)
-                do
-                    bl.logging.info "$message"
-                    msmtp -t <<EOF
+                bl.logging.debug "$message"
+                if \
+                    [ "$(bl.dictionary.get state "$normalized_url_to_check")" = valid ] ||
+                    [ "$(bl.dictionary.get state "$normalized_url_to_check")" = '' ]
+                then
+                    bl.logging.info "Status has changed to \"invalid for \"$url_to_check\". Do notification."
+                    local e_main_address
+                    for e_mail_address in $(
+                        echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                            grep ' .+$' --only-matching --extended-regexp)
+                    do
+                        msmtp -t <<EOF
 From: $reachableWatcher_sender_e_mail_address
 To: $e_mail_address
 Reply-To: $reachableWatcher_replier_e_mail_address
@@ -170,11 +182,14 @@ Subject: $reachableWatcher_name registers: "$url_to_check" responses with invali
 $message
 
 EOF
-                done
-                bl.dictionary.set state "$url_to_check" invalid
+                    done
+                    bl.dictionary.set state "$normalized_url_to_check" invalid
+                else
+                    bl.logging.debug "Status unchanged."
+                fi
             fi
         done
-        bl.logging.info "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."
+        bl.logging.debug "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."
         sleep "$reachableWatcher_delay_between_two_consequtive_requests_in_seconds"
     done
 }

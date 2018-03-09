@@ -106,7 +106,6 @@ if [ -f /etc/reachableWatcher ]; then
 fi
 ## endregion
 # endregion
-reachableWatcher_delay_between_two_consequtive_requests_in_seconds=10
 # region functions
 ## region controller
 alias reachableWatcher.main=reachableWatcher_main

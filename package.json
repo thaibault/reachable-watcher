@@ -30,12 +30,12 @@
   },
   "scripts": {
     "clear": "rm --recursive apiDocumentation &>/dev/null || true",
-    "document": "mkdir --parents apiDocumentation/backupRotation/latest && bashlink-document backupRotation 1>apiDocumentation/backupRotation/latest/index.html",
-    "document:show": "bashlink-document backupRotation",
-    "document:show:error": "bashlink-document backupRotation 1>/dev/null",
+    "document": "mkdir --parents apiDocumentation/reachableWatcher/latest && bashlink-document reachableWatcher 1>apiDocumentation/reachableWatcher/latest/index.html",
+    "document:show": "bashlink-document reachableWatcher",
+    "document:show:error": "bashlink-document reachableWatcher 1>/dev/null",
     "lint": "hash shellcheck && shellcheck -x *.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
-    "test": "bashlink-doctest --verbose backupRotation",
+    "test": "bashlink-doctest --verbose ../../reachableWatcher",
     "update": "npm version patch && npm publish",
     "update:documentation": "documentationWebsite --log-level info"
   },

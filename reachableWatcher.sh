@@ -33,6 +33,7 @@ else
         exit 1
     fi
 fi
+bl.module.import bashlink.array
 bl.module.import bashlink.dictionary
 bl.module.import bashlink.exception
 bl.module.import bashlink.logging
@@ -107,6 +108,55 @@ fi
 ## endregion
 # endregion
 # region functions
+alias reachableWatcher.is_status_valid=reachableWatcher_is_status_valid
+reachableWatcher_is_status_valid() {
+    local __documentation__='
+        Checks if given and expected status codes results in valid state.
+
+        >>> reachableWatcher.is_status_valid 200 200; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid 200 "000"; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid "000" 200; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid "000" 206; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid 206 "000"; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid 206 200; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid 200 206; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid 201 206; echo $?
+        1
+
+        >>> reachableWatcher.is_status_valid 206 201; echo $?
+        1
+
+        >>> reachableWatcher.is_status_valid 201 506; echo $?
+        1
+    '
+    local expected_status_code=$1
+    local given_status_code=$2
+    local valid_ok_codes=(000 200 206)
+    if (( expected_status_code == given_status_code )); then
+        return 0
+    fi
+    if \
+        bl.array.contains "${valid_ok_codes[*]}" "$expected_status_code" &&
+        bl.array.contains "${valid_ok_codes[*]}" "$given_status_code"
+    then
+        return 0
+    fi
+    return 1
+}
 ## region controller
 alias reachableWatcher.main=reachableWatcher_main
 reachableWatcher_main() {
@@ -133,7 +183,7 @@ reachableWatcher_main() {
             )"
             local normalized_url_to_check="$(
                 echo "$url_to_check" | sed 's/[:/.]/_/g')"
-            if (( given_status_code == expected_status_code )); then
+            if reachableWatcher.is_status_valid "$expected_status_code" "$given_status_code"; then
                 local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$reachableWatcher_date_time_format")."
                 bl.logging.debug "$message"
                 if [ "$(bl.dictionary.get state "$normalized_url_to_check")" = invalid ]; then

@@ -18,13 +18,15 @@ elif [ -f "/usr/lib/bashlink/module.sh" ]; then
     # shellcheck disable=SC1091
     source "/usr/lib/bashlink/module.sh"
 else
-    reachableWatcher_bashlink_path="$(mktemp --directory --suffix -reachable-watcher-bashlink)/bashlink/"
+    declare -gr reachableWatcher_bashlink_path="$(
+        mktemp --directory --suffix -reachable-watcher-bashlink
+    )/bashlink/"
     mkdir "$reachableWatcher_bashlink_path"
     if wget \
         https://goo.gl/UKF5JG \
         --output-document "${reachableWatcher_bashlink_path}module.sh"
     then
-        bl_module_retrieve_remote_modules=true
+        declare -gr bl_module_retrieve_remote_modules=true
         # shellcheck disable=SC1090
         source "${reachableWatcher_bashlink_path}/module.sh"
     else
@@ -40,15 +42,7 @@ bl.module.import bashlink.logging
 bl.module.import bashlink.tools
 # endregion
 # region variables
-reachableWatcher__dependencies__=(
-    bash
-    curl
-    date
-    grep
-    msmtp
-    sleep
-)
-reachableWatcher__documentation__='
+declare -gr reachableWatcher__documentation__='
     Watches a list of urls and sends mails to configured email addresses if one
     does not fit the expected status code.
 
@@ -90,15 +84,23 @@ reachableWatcher__documentation__='
         )
     ```
 '
-## region default options
-declare -A reachableWatcher_urls_to_check=()
+declare -agr reachableWatcher__dependencies__=(
+    bash
+    curl
+    date
+    grep
+    msmtp
+    sleep
+)
+## region default  options
+declare -ag reachableWatcher_urls_to_check=()
 # Wait for 5 minutes (60 * 5 = 300).
-reachableWatcher_delay_between_two_consequtive_requests_in_seconds=300
-reachableWatcher_date_time_format='%T:%N at %d.%m.%Y'
-reachableWatcher_sender_e_mail_address=''
-reachableWatcher_replier_e_mail_address="$reachableWatcher_sender_e_mail_address"
-reachableWatcher_verbose=false
-reachableWatcher_name=NODE_NAME
+declare -ig reachableWatcher_delay_between_two_consequtive_requests_in_seconds=300
+declare -g reachableWatcher_date_time_format='%T:%N at %d.%m.%Y'
+declare -g reachableWatcher_sender_e_mail_address=''
+declare -g reachableWatcher_replier_e_mail_address="$reachableWatcher_sender_e_mail_address"
+declare -g reachableWatcher_verbose=false
+declare -g reachableWatcher_name=NODE_NAME
 ## endregion
 ## region load options if present
 if [ -f /etc/reachableWatcher ]; then
@@ -110,13 +112,16 @@ fi
 # region functions
 alias reachableWatcher.is_status_valid=reachableWatcher_is_status_valid
 reachableWatcher_is_status_valid() {
-    local __documentation__='
+    local -r __documentation__='
         Checks if given and expected status codes results in valid state.
 
         >>> reachableWatcher.is_status_valid 200 200; echo $?
         0
 
         >>> reachableWatcher.is_status_valid 200 "000"; echo $?
+        0
+
+        >>> reachableWatcher.is_status_valid 200 0; echo $?
         0
 
         >>> reachableWatcher.is_status_valid "000" 200; echo $?
@@ -143,9 +148,10 @@ reachableWatcher_is_status_valid() {
         >>> reachableWatcher.is_status_valid 201 506; echo $?
         1
     '
-    local expected_status_code=$1
-    local given_status_code=$2
-    local valid_ok_codes=(000 200 206)
+    # NOTE: Given state "000" resolves to "0" as interpreted integer.
+    local -ir expected_status_code=$1
+    local -ir given_status_code=$2
+    local -ar valid_ok_codes=(0 200 206)
     if (( expected_status_code == given_status_code )); then
         return 0
     fi
@@ -160,7 +166,7 @@ reachableWatcher_is_status_valid() {
 ## region controller
 alias reachableWatcher.main=reachableWatcher_main
 reachableWatcher_main() {
-    local __documentation__='
+    local -r __documentation__='
         Main entry point.
     '
     $reachableWatcher_verbose && \
@@ -168,11 +174,11 @@ reachableWatcher_main() {
     while true; do
         local url_to_check
         for url_to_check in "${!reachableWatcher_urls_to_check[@]}"; do
-            local expected_status_code="$(
+            local -i expected_status_code="$(
                 echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
                     grep '^[^ ]+' --only-matching --extended-regexp)"
             bl.logging.debug "Check url \"$url_to_check\" for status code $expected_status_code."
-            local given_status_code="$(
+            local -i given_status_code="$(
                 curl \
                     --head \
                     --insecure \

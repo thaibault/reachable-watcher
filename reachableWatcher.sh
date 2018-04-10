@@ -152,7 +152,10 @@ reachableWatcher_is_status_valid() {
     local -ir expected_status_code=$1
     local -ir given_status_code=$2
     local -ar valid_ok_codes=(0 200 206)
-    if (( expected_status_code == given_status_code )); then
+    if \
+        (( expected_status_code == given_status_code )) || \
+        (( given_status_code == 0 ))
+    then
         return 0
     fi
     if \
@@ -189,7 +192,10 @@ reachableWatcher_main() {
             )"
             local normalized_url_to_check="$(
                 echo "$url_to_check" | sed 's/[:/.]/_/g')"
-            if reachableWatcher.is_status_valid "$expected_status_code" "$given_status_code"; then
+            if reachableWatcher.is_status_valid \
+                "$expected_status_code" \
+                "$given_status_code"
+            then
                 local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$reachableWatcher_date_time_format")."
                 bl.logging.debug "$message"
                 if [ "$(bl.dictionary.get state "$normalized_url_to_check")" = invalid ]; then

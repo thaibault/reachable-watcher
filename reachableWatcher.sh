@@ -23,7 +23,7 @@ else
     )/bashlink/"
     mkdir "$reachableWatcher_bashlink_path"
     if wget \
-        https://goo.gl/UKF5JG \
+        http://torben.website/bashlink/data/distributionBundle/module.sh && \
         --output-document "${reachableWatcher_bashlink_path}module.sh"
     then
         declare -gr bl_module_retrieve_remote_modules=true
@@ -92,7 +92,7 @@ declare -agr reachableWatcher__dependencies__=(
     msmtp
     sleep
 )
-## region default  options
+## region default options
 declare -ag reachableWatcher_urls_to_check=()
 # Wait for 5 minutes (60 * 5 = 300).
 declare -ig reachableWatcher_delay_between_two_consequtive_requests_in_seconds=300

@@ -3,7 +3,7 @@
   "version": "1.0.37",
   "license": "CC-BY-3.0",
   "description": "Check status codes of web servers and sends notification e-mails",
-  "homepage": "http://torben.website/reachableWatcher",
+  "homepage": "https://torben.website/reachableWatcher",
   "documentationWebsite": {
     "name": "reachableWatcher",
     "trackingCode": "UA-40192634-15"
@@ -40,8 +40,8 @@
     "update:documentation": "documentationWebsite --log-level info"
   },
   "devDependencies": {
-    "bashlink": "^1.0.114",
-    "documentation-website": "^1.0.129",
-    "shellcheck": "0.0.8"
+    "bashlink": "*",
+    "documentation-website": "*",
+    "shellcheck": "*"
   }
 }

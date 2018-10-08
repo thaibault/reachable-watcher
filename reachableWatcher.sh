@@ -23,7 +23,7 @@ else
     )/bashlink/"
     mkdir "$reachableWatcher_bashlink_path"
     if wget \
-        http://torben.website/bashlink/data/distributionBundle/module.sh && \
+        http://torben.website/bashlink/data/distributionBundle/module.sh \
         --output-document "${reachableWatcher_bashlink_path}module.sh"
     then
         declare -gr bl_module_retrieve_remote_modules=true

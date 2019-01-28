@@ -7,14 +7,14 @@
 # -------
 
 # This library written by Torben Sickert stand under a creative commons naming
-# 3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+# 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 pkgname=reachable-watcher
 pkgver=1.0.14
 pkgrel=16
 pkgdesc='Check status codes of web servers and sends notification e-mails'
 arch=(any)
-url=http://torben.website/reachableWatcher
+url=https://torben.website/reachableWatcher
 license=(CC-BY-3.0)
 depends=(bash curl grep coreutils)
 optdepends=('msmtp: for automatic email notifications on missing sources')

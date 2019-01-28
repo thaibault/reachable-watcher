@@ -7,7 +7,7 @@ License
 -------
 
 This library written by Torben Sickert stand under a creative commons naming
-3.0 unported license. see http://creativecommons.org/licenses/by/3.0/deed.de
+3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 endregion -->
 
 Project status
@@ -19,7 +19,7 @@ Project status
 [![dependencies](https://img.shields.io/david/thaibault/reachable-watcher.svg)](https://david-dm.org/thaibault/reachable-watcher)
 [![development dependencies](https://img.shields.io/david/dev/thaibault/reachable-watcher.svg)](https://david-dm.org/thaibault/reachable-watcher?type=dev)
 [![peer dependencies](https://img.shields.io/david/peer/thaibault/reachable-watcher.svg)](https://david-dm.org/thaibault/reachable-watcher?type=peer)
-[![documentation website](https://img.shields.io/website-up-down-green-red/http/torben.website/reachableWatcher.svg?label=documentation-website)](http://torben.website/reachableWatcher)
+[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/reachableWatcher.svg?label=documentation-website)](https://torben.website/reachableWatcher)
 
 Use case
 --------

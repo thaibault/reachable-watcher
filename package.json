@@ -3,9 +3,9 @@
   "version": "1.0.88",
   "license": "CC-BY-3.0",
   "description": "Check status codes of web servers and sends notification e-mails",
-  "homepage": "https://torben.website/reachableWatcher",
+  "homepage": "https://torben.website/reachable-watcher",
   "documentationWebsite": {
-    "name": "reachableWatcher",
+    "name": "reachable-watcher",
     "trackingCode": "UA-40192634-15"
   },
   "keywords": [
@@ -18,24 +18,24 @@
     "online"
   ],
   "files": [
-    "reachableWatcher.service"
+    "reachable-watcher.service"
   ],
-  "main": "reachableWatcher.sh",
+  "main": "reachable-watcher.sh",
   "bin": {
-    "reachableWatcher": "reachableWatcher.sh"
+    "reachable-watcher": "reachable-watcher.sh"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaibault/reachableWatcher"
+    "url": "https://github.com/thaibault/reachable-watcher"
   },
   "scripts": {
     "clear": "rm --recursive apiDocumentation &>/dev/null || true",
-    "document": "mkdir --parents apiDocumentation/reachableWatcher/latest && bashlink-document reachableWatcher 1>apiDocumentation/reachableWatcher/latest/index.html",
-    "document:show": "bashlink-document reachableWatcher",
-    "document:show:error": "bashlink-document reachableWatcher 1>/dev/null",
+    "document": "mkdir --parents apiDocumentation/reachable-watcher/latest && bashlink-document reachable-watcher 1>apiDocumentation/reachable-watcher/latest/index.html",
+    "document:show": "bashlink-document reachable-watcher",
+    "document:show:error": "bashlink-document reachable-watcher 1>/dev/null",
     "lint": "hash shellcheck && shellcheck -x *.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
-    "test": "bashlink-doctest --verbose ../../reachableWatcher",
+    "test": "bashlink-doctest --verbose ../../reachable-watcher",
     "update": "yarn version --patch && yarn publish",
     "update:documentation": "documentationWebsite --log-level info"
   },

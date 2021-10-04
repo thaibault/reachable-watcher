@@ -20,7 +20,7 @@
   "files": [
     "reachable-watcher.service"
   ],
-  "main": "reachable-watcher.sh",
+  "main": "reachableWatcher.sh",
   "bin": {
     "reachable-watcher": "reachable-watcher.sh"
   },

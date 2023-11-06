@@ -13,9 +13,10 @@ endregion -->
 Project status
 --------------
 
-[![npm](https://img.shields.io/npm/v/reachable-watcher?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d)](https://www.npmjs.com/package/reachable-watcher)
-[![npm downloads](https://img.shields.io/npm/dy/reachable-watcher.svg)](https://www.npmjs.com/package/reachable-watcher)
-[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/reachable-watcher.svg?label=documentation-website)](https://torben.website/reachable-watcher)
+[![npm](https://img.shields.io/npm/v/reachable-watcher?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d&style=for-the-badge)](https://www.npmjs.com/package/reachable-watcher)
+[![npm downloads](https://img.shields.io/npm/dy/reachable-watcher.svg?style=for-the-badge)](https://www.npmjs.com/package/reachable-watcher)
+
+[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/reachable-watcher.svg?label=documentation-website&style=for-the-badge)](https://torben.website/reachable-watcher)
 
 Use case
 --------

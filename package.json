@@ -37,7 +37,7 @@
     "lint:given": "shellcheck -x",
     "postversion": "yarn publish --non-interactive; git push --tags && git push",
     "test": "bashlink-doctest --verbose ../../reachable-watcher",
-    "update": "yarn version patch && git push --tags",
+    "update": "yarn version patch && yarn npm publish",
     "update:documentation": "documentation-website"
   },
   "devDependencies": {

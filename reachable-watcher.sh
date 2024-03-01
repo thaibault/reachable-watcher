@@ -29,7 +29,7 @@ else
         --output-document "${reachableWatcher_bashlink_path}module.sh"
     then
         declare -gr bl_module_retrieve_remote_modules=true
-        # shellcheck disable=SC1090
+        # shellcheck disable=SC1091
         source "${reachableWatcher_bashlink_path}/module.sh"
         rm --force --recursive "$reachableWatcher_bashlink_path"
     else

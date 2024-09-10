@@ -20,21 +20,21 @@ elif [ -f "/usr/lib/bashlink/module.sh" ]; then
     # shellcheck disable=SC1091
     source "/usr/lib/bashlink/module.sh"
 else
-    declare -gr reachableWatcher_bashlink_path="$(
+    declare -gr RW_BASHLINK_PATH="$(
         mktemp --directory --suffix -reachable-watcher-bashlink
     )/bashlink/"
-    mkdir "$reachableWatcher_bashlink_path"
+    mkdir "$RW_BASHLINK_PATH"
     if wget \
         https://torben.website/bashlink/data/distributionBundle/module.sh \
-        --output-document "${reachableWatcher_bashlink_path}module.sh"
+        --output-document "${RW_BASHLINK_PATH}module.sh"
     then
-        declare -gr bl_module_retrieve_remote_modules=true
+        declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
         # shellcheck disable=SC1091
-        source "${reachableWatcher_bashlink_path}/module.sh"
-        rm --force --recursive "$reachableWatcher_bashlink_path"
+        source "${RW_BASHLINK_PATH}/module.sh"
+        rm --force --recursive "$RW_BASHLINK_PATH"
     else
         echo Needed bashlink library not found 1>&2
-        rm --force --recursive "$reachableWatcher_bashlink_path"
+        rm --force --recursive "$RW_BASHLINK_PATH"
         exit 1
     fi
 fi
@@ -45,7 +45,7 @@ bl.module.import bashlink.logging
 bl.module.import bashlink.tools
 # endregion
 # region variables
-declare -gr reachableWatcher__documentation__='
+declare -gr RW__DOCUMENTATION__='
     Watches a list of urls and sends mails to configured email addresses if one
     does not fit the expected status code.
 
@@ -75,19 +75,19 @@ declare -gr reachableWatcher__documentation__='
 
     Furthermore you should create a file "/etc/reachableWatcher" to overwrite
     the following variables. You need to set values for
-    `reachableWatcher_urls_to_check` and
-    `reachableWatcher_sender_e_mail_address` at least:
+    `RW_URLS_TO_CHECK` and
+    `RW_SENDER_E_MAIL_ADDRESS` at least:
 
     ```bash
-        reachableWatcher_sender_e_mail_address="ACCOUNT_E_MAIL_ADDRESS"
-        declare -A reachableWatcher_urls_to_check=(
+        RW_SENDER_E_MAIL_ADDRESS="ACCOUNT_E_MAIL_ADDRESS"
+        declare -A RW_URLS_TO_CHECK=(
             ["URL1"]="200 RECIPIENT_E_MAIL_ADDRESS"
             ["URL2"]="200 RECIPIENT_E_MAIL_ADDRESS ANOTHER_RECIPIENT_E_MAIL_ADDRESS"
             ...
         )
     ```
 '
-declare -agr reachableWatcher__dependencies__=(
+declare -agr RW__DEPENDENCIES__=(
     bash
     curl
     date
@@ -96,14 +96,14 @@ declare -agr reachableWatcher__dependencies__=(
     sleep
 )
 ## region default options
-declare -ag reachableWatcher_urls_to_check=()
+declare -ag RW_URLS_TO_CHECK=()
 # Wait for 5 minutes (60 * 5 = 300).
-declare -ig reachableWatcher_delay_between_two_consequtive_requests_in_seconds=300
-declare -g reachableWatcher_date_time_format='%T:%N at %d.%m.%Y'
-declare -g reachableWatcher_sender_e_mail_address=''
-declare -g reachableWatcher_replier_e_mail_address="$reachableWatcher_sender_e_mail_address"
-declare -g reachableWatcher_verbose=false
-declare -g reachableWatcher_name=NODE_NAME
+declare -ig RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS=300
+declare -g RW_DATE_TIME_FORMAT='%T:%N at %d.%m.%Y'
+declare -g RW_SENDER_E_MAIL_ADDRESS=''
+declare -g RW_REPLIER_E_MAIL_ADDRESS="$RW_SENDER_E_MAIL_ADDRESS"
+declare -g RW_VERBOSE=false
+declare -g RW_NAME=NODE_NAME
 ## endregion
 ## region load options if present
 if [ -f /etc/reachableWatcher ]; then
@@ -113,42 +113,42 @@ fi
 ## endregion
 # endregion
 # region functions
-alias reachableWatcher.is_status_valid=reachableWatcher_is_status_valid
-reachableWatcher_is_status_valid() {
+alias rw.is_status_valid=rw_is_status_valid
+rw_is_status_valid() {
     local -r __documentation__='
         Checks if given and expected status codes results in valid state.
 
-        >>> reachableWatcher.is_status_valid 200 200; echo $?
+        >>> rw.is_status_valid 200 200; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid 200 "000"; echo $?
+        >>> rw.is_status_valid 200 "000"; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid 200 0; echo $?
+        >>> rw.is_status_valid 200 0; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid "000" 200; echo $?
+        >>> rw.is_status_valid "000" 200; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid "000" 206; echo $?
+        >>> rw.is_status_valid "000" 206; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid 206 "000"; echo $?
+        >>> rw.is_status_valid 206 "000"; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid 206 200; echo $?
+        >>> rw.is_status_valid 206 200; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid 200 206; echo $?
+        >>> rw.is_status_valid 200 206; echo $?
         0
 
-        >>> reachableWatcher.is_status_valid 201 206; echo $?
+        >>> rw.is_status_valid 201 206; echo $?
         1
 
-        >>> reachableWatcher.is_status_valid 206 201; echo $?
+        >>> rw.is_status_valid 206 201; echo $?
         1
 
-        >>> reachableWatcher.is_status_valid 201 506; echo $?
+        >>> rw.is_status_valid 201 506; echo $?
         1
     '
     # NOTE: Given state "000" resolves to "0" as interpreted integer.
@@ -170,18 +170,18 @@ reachableWatcher_is_status_valid() {
     return 1
 }
 ## region controller
-alias reachableWatcher.main=reachableWatcher_main
-reachableWatcher_main() {
+alias rw.main=rw_main
+rw_main() {
     local -r __documentation__='
         Main entry point.
     '
-    $reachableWatcher_verbose && \
+    $RW_VERBOSE && \
         bl.logging.set_level info
     while true; do
         local url_to_check
-        for url_to_check in "${!reachableWatcher_urls_to_check[@]}"; do
+        for url_to_check in "${!RW_URLS_TO_CHECK[@]}"; do
             local -i expected_status_code="$(
-                echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                echo "${RW_URLS_TO_CHECK[$url_to_check]}" | \
                     grep '^[^ ]+' --only-matching --extended-regexp)"
             bl.logging.debug "Check url \"$url_to_check\" for status code $expected_status_code."
             local -i given_status_code="$(
@@ -195,25 +195,25 @@ reachableWatcher_main() {
             )"
             local normalized_url_to_check="$(
                 echo "$url_to_check" | sed 's/[:/.]/_/g')"
-            if reachableWatcher.is_status_valid \
+            if rw.is_status_valid \
                 "$expected_status_code" \
                 "$given_status_code"
             then
-                local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$reachableWatcher_date_time_format")."
+                local message="Requested URL \"$url_to_check\" returns valid status code $given_status_code on $(date +"$RW_DATE_TIME_FORMAT")."
                 bl.logging.debug "$message"
                 if [ "$(bl.dictionary.get state "$normalized_url_to_check")" = invalid ]; then
                     bl.logging.info "Status has changed to \"valid\" for \"$url_to_check\". Do notification."
                     local e_main_address
                     for e_mail_address in $(
-                        echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                        echo "${RW_URLS_TO_CHECK[$url_to_check]}" | \
                             grep ' .+$' --only-matching --extended-regexp)
                     do
                         msmtp -t <<EOF
-From: $reachableWatcher_sender_e_mail_address
+From: $RW_SENDER_E_MAIL_ADDRESS
 To: $e_mail_address
-Reply-To: $reachableWatcher_replier_e_mail_address
+Reply-To: $RW_REPLIER_E_MAIL_ADDRESS
 Date: $(date)
-Subject: $reachableWatcher_name registers: "$url_to_check" responses with valid status code $given_status_code.
+Subject: $RW_NAME registers: "$url_to_check" responses with valid status code $given_status_code.
 
 $message
 
@@ -224,7 +224,7 @@ EOF
                     bl.logging.debug "Status unchanged."
                 fi
             else
-                local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$reachableWatcher_date_time_format")."
+                local message="Requested URL \"$url_to_check\" returns status code $given_status_code (instead of \"$expected_status_code\") on $(date +"$RW_DATE_TIME_FORMAT")."
                 bl.logging.debug "$message"
                 if \
                     [ "$(bl.dictionary.get state "$normalized_url_to_check")" = valid ] ||
@@ -233,15 +233,15 @@ EOF
                     bl.logging.info "Status has changed to \"invalid for \"$url_to_check\". Do notification."
                     local e_main_address
                     for e_mail_address in $(
-                        echo "${reachableWatcher_urls_to_check[$url_to_check]}" | \
+                        echo "${RW_URLS_TO_CHECK[$url_to_check]}" | \
                             grep ' .+$' --only-matching --extended-regexp)
                     do
                         msmtp -t <<EOF
-From: $reachableWatcher_sender_e_mail_address
+From: $RW_SENDER_E_MAIL_ADDRESS
 To: $e_mail_address
-Reply-To: $reachableWatcher_replier_e_mail_address
+Reply-To: $RW_REPLIER_E_MAIL_ADDRESS
 Date: $(date)
-Subject: $reachableWatcher_name registers: "$url_to_check" responses with invalid status code $given_status_code!
+Subject: $RW_NAME registers: "$url_to_check" responses with invalid status code $given_status_code!
 
 $message
 
@@ -253,8 +253,8 @@ EOF
                 fi
             fi
         done
-        bl.logging.debug "Wait for $reachableWatcher_delay_between_two_consequtive_requests_in_seconds seconds until next check."
-        sleep "$reachableWatcher_delay_between_two_consequtive_requests_in_seconds"
+        bl.logging.debug "Wait for $RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS seconds until next check."
+        sleep "$RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS"
     done
 }
 ## endregion
@@ -262,22 +262,22 @@ EOF
 if bl.tools.is_main; then
     bl.exception.activate
     bl.exception.try
-        reachableWatcher.main "$@"
+        rw.main "$@"
     bl.exception.catch_single
     {
-        [ -d "$reachableWatcher_bashlink_path" ] && \
-            rm --recursive "$reachableWatcher_bashlink_path"
+        [ -d "$RW_BASHLINK_PATH" ] && \
+            rm --recursive "$RW_BASHLINK_PATH"
         # shellcheck disable=SC2154
-        [ -d "$bl_module_remote_module_cache_path" ] && \
-            rm --recursive "$bl_module_remote_module_cache_path"
+        [ -d "$BL_MODULE_REMOTE_MODULE_CACHE_PATH" ] && \
+            rm --recursive "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
         # shellcheck disable=SC2154
         bl.logging.error "$bl_exception_last_traceback"
     }
-    [ -d "$reachableWatcher_bashlink_path" ] && \
-        rm --recursive "$reachableWatcher_bashlink_path"
+    [ -d "$RW_BASHLINK_PATH" ] && \
+        rm --recursive "$RW_BASHLINK_PATH"
     # shellcheck disable=SC2154
-    [ -d "$bl_module_remote_module_cache_path" ] && \
-        rm --recursive "$bl_module_remote_module_cache_path"
+    [ -d "$BL_MODULE_REMOTE_MODULE_CACHE_PATH" ] && \
+        rm --recursive "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:

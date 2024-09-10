@@ -271,7 +271,7 @@ if bl.tools.is_main; then
         [ -d "$BL_MODULE_REMOTE_MODULE_CACHE_PATH" ] && \
             rm --recursive "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
         # shellcheck disable=SC2154
-        bl.logging.error "$bl_exception_last_traceback"
+        bl.logging.error "$BL_EXCEPTION_LAST_TRACEBACK"
     }
     [ -d "$RW_BASHLINK_PATH" ] && \
         rm --recursive "$RW_BASHLINK_PATH"

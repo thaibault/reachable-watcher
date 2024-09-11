@@ -95,6 +95,8 @@ declare -agr RW__DEPENDENCIES__=(
     msmtp
     sleep
 )
+BL_MODULE_FUNCTION_SCOPE_REWRITES+=('^reachableWatcher([._][a-zA-Z_-]+)?$/rw\1/')
+BL_MODULE_GLOBAL_SCOPE_REWRITES+=('^REACHABLE_WATCHER(_[a-zA-Z_-]+)?$/RW\1/')
 ## region default options
 declare -ag RW_URLS_TO_CHECK=()
 # Wait for 5 minutes (60 * 5 = 300).

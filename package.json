@@ -1,6 +1,6 @@
 {
   "name": "reachable-watcher",
-  "version": "1.0.105",
+  "version": "1.0.106",
   "license": "CC-BY-3.0",
   "description": "Check status codes of web servers and sends notification e-mails",
   "homepage": "https://torben.website/reachable-watcher",

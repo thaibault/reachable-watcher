@@ -39,8 +39,8 @@
     "update:documentation": "documentation-website"
   },
   "devDependencies": {
-    "bashlink": "^1.0.254",
-    "documentation-website": "^1.0.332",
+    "bashlink": "^1.0.255",
+    "documentation-website": "^1.0.336",
     "rimraf": "^6.0.1",
     "shellcheck": "^3.0.0"
   },

@@ -1,6 +1,6 @@
 {
   "name": "reachable-watcher",
-  "version": "1.0.107",
+  "version": "1.0.108",
   "license": "CC-BY-3.0",
   "description": "Check status codes of web servers and sends notification e-mails",
   "homepage": "https://torben.website/reachable-watcher",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "bashlink": "^1.0.258",
-    "documentation-website": "^1.0.337",
+    "documentation-website": "^1.0.338",
     "rimraf": "^6.0.1",
     "shellcheck": "^3.0.0"
   },

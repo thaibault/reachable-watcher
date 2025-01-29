@@ -16,6 +16,8 @@ Project status
 [![npm](https://img.shields.io/npm/v/reachable-watcher?color=%23d55e5d&label=npm%20package%20version&logoColor=%23d55e5d&style=for-the-badge)](https://www.npmjs.com/package/reachable-watcher)
 [![npm downloads](https://img.shields.io/npm/dy/reachable-watcher.svg?style=for-the-badge)](https://www.npmjs.com/package/reachable-watcher)
 
+[![build push package](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/build-package-and-push.yaml?label=build%20push%20package&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/build-package-and-push.yaml)
+
 [![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/reachable-watcher.svg?label=documentation-website&style=for-the-badge)](https://torben.website/reachable-watcher)
 
 Use case

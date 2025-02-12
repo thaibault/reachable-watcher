@@ -39,9 +39,9 @@
   },
   "devDependencies": {
     "bashlink": "^1.0.259",
-    "documentation-website": "^1.0.342",
+    "documentation-website": "^1.0.343",
     "rimraf": "^6.0.1",
-    "shellcheck": "^3.0.0"
+    "shellcheck": "^3.1.0"
   },
   "engines": {
     "node": ">=20",

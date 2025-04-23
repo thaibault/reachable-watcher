@@ -12,7 +12,20 @@
 # 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
 # endregion
 # shellcheck disable=SC1004,SC2016,SC2034,SC2155
+shopt -s expand_aliases
 # region import
+alias rw.download=rw_download
+rw_download() {
+    local -r __documentation__='
+        Simply downloads missing modules.
+
+        >>> br.download --silent https://domain.tld/path/to/file.ext; echo $?
+        6
+    '
+    command curl --insecure "$@"
+    return $?
+}
+
 if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
     # shellcheck disable=SC1090
     source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
@@ -20,23 +33,33 @@ elif [ -f "/usr/lib/bashlink/module.sh" ]; then
     # shellcheck disable=SC1091
     source "/usr/lib/bashlink/module.sh"
 else
-    declare -gr RW_BASHLINK_PATH="$(
-        mktemp --directory --suffix -reachable-watcher-bashlink
-    )/bashlink/"
-    mkdir "$RW_BASHLINK_PATH"
-    if wget \
-        https://torben.website/bashlink/data/distributionBundle/module.sh \
-        --output-document "${RW_BASHLINK_PATH}module.sh"
-    then
-        declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
-        # shellcheck disable=SC1091
-        source "${RW_BASHLINK_PATH}/module.sh"
-        rm --force --recursive "$RW_BASHLINK_PATH"
-    else
-        echo Needed bashlink library not found 1>&2
-        rm --force --recursive "$RW_BASHLINK_PATH"
+    declare -g RW_CACHE_PATH="$(
+        echo "$@" | \
+            sed \
+                --regexp-extended \
+                's/(^| )(-o|--cache-path)(=| +)(.+[^ ])($| +-)/\4/'
+    )"
+    [ "$RW_CACHE_PATH" = "$*" ] && \
+        RW_CACHE_PATH=reachableWatcherInstallCache
+    RW_CACHE_PATH="${RW_CACHE_PATH%/}/"
+    declare -gr BL_MODULE_REMOTE_MODULE_CACHE_PATH="${RW_CACHE_PATH}bashlink"
+    mkdir --parents "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
+    declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true
+    if ! (
+        [ -f "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh" ] || \
+        rw.download \
+            https://raw.githubusercontent.com/thaibault/bashlink/main/module.sh \
+                >"${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
+    ); then
+        echo Needed bashlink library could not be retrieved. 1>&2
+        rm \
+            --force \
+            --recursive \
+            "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
         exit 1
     fi
+    # shellcheck disable=SC1091
+    source "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
 fi
 bl.module.import bashlink.array
 bl.module.import bashlink.dictionary

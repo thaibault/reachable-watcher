@@ -281,20 +281,22 @@ if bl.tools.is_main; then
     bl.exception.try
         rw.main "$@"
     bl.exception.catch_single
+    # region clean up
     {
-        [ -d "$RW_BASHLINK_PATH" ] && \
-            rm --recursive "$RW_BASHLINK_PATH"
+        [ -f "$BL_MODULE_NAME_RESOLVING_CACHE_FILE_PATH" ] && \
+            rm "$BL_MODULE_NAME_RESOLVING_CACHE_FILE_PATH"
         # shellcheck disable=SC2154
         [ -d "$BL_MODULE_REMOTE_MODULE_CACHE_PATH" ] && \
             rm --recursive "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
         # shellcheck disable=SC2154
         bl.logging.error "$BL_EXCEPTION_LAST_TRACEBACK"
     }
-    [ -d "$RW_BASHLINK_PATH" ] && \
-        rm --recursive "$RW_BASHLINK_PATH"
+    [ -f "$BL_MODULE_NAME_RESOLVING_CACHE_FILE_PATH" ] && \
+        rm "$BL_MODULE_NAME_RESOLVING_CACHE_FILE_PATH"
     # shellcheck disable=SC2154
     [ -d "$BL_MODULE_REMOTE_MODULE_CACHE_PATH" ] && \
         rm --recursive "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
+    # endregion
 fi
 # region vim modline
 # vim: set tabstop=4 shiftwidth=4 expandtab:

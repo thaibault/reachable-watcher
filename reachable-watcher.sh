@@ -33,15 +33,7 @@ elif [ -f "/usr/lib/bashlink/module.sh" ]; then
     # shellcheck disable=SC1091
     source "/usr/lib/bashlink/module.sh"
 else
-    declare -g RW_CACHE_PATH="$(
-        echo "$@" | \
-            sed \
-                --regexp-extended \
-                's/(^| )(-o|--cache-path)(=| +)(.+[^ ])($| +-)/\4/'
-    )"
-    [ "$RW_CACHE_PATH" = "$*" ] && \
-        RW_CACHE_PATH=reachableWatcherInstallCache
-    RW_CACHE_PATH="${RW_CACHE_PATH%/}/"
+    declare -g RW_CACHE_PATH=/tmp/reachableWatcherInstallCache/
     declare -gr BL_MODULE_REMOTE_MODULE_CACHE_PATH="${RW_CACHE_PATH}bashlink"
     mkdir --parents "$BL_MODULE_REMOTE_MODULE_CACHE_PATH"
     declare -gr BL_MODULE_RETRIEVE_REMOTE_MODULES=true

@@ -179,8 +179,8 @@ rw_is_status_valid() {
         return 0
     fi
     if \
-        bl.array.contains "${valid_ok_codes[*]}" "$expected_status_code" &&
-        bl.array.contains "${valid_ok_codes[*]}" "$given_status_code"
+        bl.array.contains "$expected_status_code" "${valid_ok_codes[@]}" &&
+        bl.array.contains "$given_status_code" "${valid_ok_codes[@]}"
     then
         return 0
     fi

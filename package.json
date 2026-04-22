@@ -35,11 +35,11 @@
     "lint": "hash shellcheck && shellcheck -x *.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
     "test": "./node_modules/.bin/bashlink-doctest --verbose ../../reachable-watcher",
-    "update:documentation": "documentation-website"
+    "update:documentation": "web-documentation"
   },
   "devDependencies": {
     "bashlink": "^1.0.273",
-    "documentation-website": "^1.0.396",
+    "web-documentation": "^1.0.0",
     "rimraf": "^6.1.2",
     "shellcheck": "^4.1.0"
   },

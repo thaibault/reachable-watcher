@@ -19,7 +19,7 @@ Project status
 [![build push package](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/build-package-and-push.yaml?label=build%20push%20package&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/build-package-and-push.yaml)
 
 [![deploy web documentation](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/deploy-web-documentation.yaml?label=deploy%20web%20documentation&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/deploy-web-documentation.yaml)
-[![documentation website](https://img.shields.io/website-up-down-green-red/https/torben.website/reachable-watcher.svg?label=web-documentation&style=for-the-badge)](https://torben.website/reachable-watcher)
+[![web documentation](https://img.shields.io/website-up-down-green-red/https/torben.website/reachable-watcher.svg?label=web-documentation&style=for-the-badge)](https://torben.website/reachable-watcher)
 
 Use case
 --------

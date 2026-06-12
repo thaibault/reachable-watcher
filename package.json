@@ -4,8 +4,7 @@
   "license": "CC-BY-3.0",
   "description": "Check status codes of web servers and sends notification e-mails",
   "homepage": "https://torben.website/reachable-watcher",
-  "documentationWebsite": {
-    "name": "reachable-watcher",
+  "webDocumentation": {
     "trackingCode": "UA-40192634-15"
   },
   "keywords": [

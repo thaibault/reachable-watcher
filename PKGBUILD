@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 # region header
-# Copyright Torben Sickert (info["~at~"]torben.website) 16.12.2012
+# Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
 # License
 # -------
@@ -14,7 +14,7 @@ pkgver=1.0.14
 pkgrel=16
 pkgdesc='Check status codes of web servers and sends notification e-mails'
 arch=(any)
-url=https://torben.website/reachableWatcher
+url=https://tsickert.com/reachableWatcher
 license=(CC-BY-3.0)
 depends=(bash curl grep coreutils)
 optdepends=('msmtp: for automatic email notifications on missing sources')

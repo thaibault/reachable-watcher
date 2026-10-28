@@ -18,7 +18,9 @@
     "url": "https://github.com/thaibault/reachable-watcher"
   },
   "main": "reachable-watcher.sh",
-  "bin": "reachable-watcher.sh",
+  "bin": {
+    "reachable-watcher": "reachable-watcher.sh"
+  },
   "files": [
     "reachable-watcher.service"
   ],

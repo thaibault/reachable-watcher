@@ -1,6 +1,6 @@
 {
   "name": "reachable-watcher",
-  "version": "1.0.123",
+  "version": "1.0.124",
   "description": "Check status codes of web servers and sends notification e-mails",
   "keywords": [
     "reachable",
@@ -18,9 +18,7 @@
     "url": "https://github.com/thaibault/reachable-watcher"
   },
   "main": "reachable-watcher.sh",
-  "bin": {
-    "reachable-watcher": "reachable-watcher.sh"
-  },
+  "bin": "reachable-watcher.sh",
   "files": [
     "reachable-watcher.service"
   ],

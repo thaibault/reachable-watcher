@@ -1,6 +1,6 @@
 {
   "name": "reachable-watcher",
-  "version": "1.0.122",
+  "version": "1.0.123",
   "description": "Check status codes of web servers and sends notification e-mails",
   "keywords": [
     "reachable",

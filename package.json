@@ -1,6 +1,6 @@
 {
   "name": "reachable-watcher",
-  "version": "1.0.125",
+  "version": "1.0.126",
   "description": "Check status codes of web servers and sends notification e-mails",
   "keywords": [
     "reachable",
@@ -15,10 +15,12 @@
   "license": "CC-BY-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaibault/reachable-watcher"
+    "url": "git+https://github.com/thaibault/reachable-watcher.git"
   },
   "main": "reachable-watcher.sh",
-  "bin": "reachable-watcher.sh",
+  "bin": {
+    "reachable-watcher": "reachable-watcher.sh"
+  },
   "files": [
     "reachable-watcher.service"
   ],
@@ -29,7 +31,7 @@
     "document:show:error": "bashlink-document reachable-watcher 1>/dev/null",
     "lint": "hash shellcheck && shellcheck -x *.sh || echo Please install \"shellcheck\". || true",
     "lint:given": "shellcheck -x",
-    "test": "./node_modules/.bin/bashlink-doctest --verbose ../../reachable-watcher",
+    "test": "bashlink-doctest --verbose ../../reachable-watcher",
     "update:documentation": "web-documentation"
   },
   "devDependencies": {

@@ -19,6 +19,9 @@ Project Status
 
 [![build push package](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/build-package-and-push.yaml?label=build%20push%20package&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/build-package-and-push.yaml)
 
+[![lint](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/lint.yaml?label=lint&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/lint.yaml)
+[![test](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/test.yaml?label=test&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/test.yaml)
+
 [![deploy web documentation](https://img.shields.io/github/actions/workflow/status/thaibault/reachable-watcher/deploy-web-documentation.yaml?label=deploy%20web%20documentation&style=for-the-badge)](https://github.com/thaibault/reachable-watcher/actions/workflows/deploy-web-documentation.yaml)
 [![web documentation](https://img.shields.io/website-up-down-green-red/https/tsickert.com/reachable-watcher.svg?label=web-documentation&style=for-the-badge)](https://tsickert.com/reachable-watcher)
 

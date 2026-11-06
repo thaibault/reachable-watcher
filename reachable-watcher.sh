@@ -19,7 +19,7 @@ rw_download() {
     local -r __documentation__='
         Simply downloads missing modules.
 
-        >>> br.download --silent https://domain.tld/path/to/file.ext; echo $?
+        >>> rw.download --silent https://domain.tld/path/to/file.ext; echo $?
         6
     '
     command curl --insecure "$@"

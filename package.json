@@ -18,9 +18,7 @@
     "url": "git+https://github.com/thaibault/reachable-watcher.git"
   },
   "main": "reachable-watcher.sh",
-  "bin": {
-    "reachable-watcher": "reachable-watcher.sh"
-  },
+  "bin": "reachable-watcher.sh",
   "files": [
     "reachable-watcher.service"
   ],
@@ -35,10 +33,10 @@
     "update:documentation": "web-documentation"
   },
   "devDependencies": {
-    "bashlink": "^1.0.292",
+    "bashlink": "^1.0.293",
     "rimraf": "^6.1.4",
     "shellcheck": "^4.1.0",
-    "web-documentation": "^1.0.72"
+    "web-documentation": "^1.0.74"
   },
   "engines": {
     "node": ">=26",

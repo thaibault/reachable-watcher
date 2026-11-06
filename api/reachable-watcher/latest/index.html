@@ -1,0 +1,226 @@
+## Module reachable-watcher
+Watches a list of urls and sends mails to configured email addresses if one
+does not fit the expected status code.
+
+You have to install program `msmtp` to get this script working. A proper
+user specific "~/.msmtprc" or global "/etc/msmtprc" have to be present on
+your distribution. A sample configuration using simple gmail account to
+send mails (Replace "ACCOUNT_NAME", "ACCOUNT_E_MAIL_ADDRESS",
+"ACCOUNT_PASSWORD"):
+
+```
+defaults
+auth           on
+tls            on
+tls_starttls   on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        /tmp/msmtpLog
+
+account        gmail
+host           smtp.gmail.com
+port           587
+from           ACCOUNT_E_MAIL_ADDRESS
+user           ACCOUNT_NAME@gmail.com
+password       ACCOUNT_PASSWORD
+
+account        default : gmail
+```
+
+Furthermore you should create a file "/etc/reachableWatcher" to overwrite
+the following variables. You need to set values for
+`RW_URLS_TO_CHECK` and
+`RW_SENDER_E_MAIL_ADDRESS` at least:
+
+```bash
+RW_SENDER_E_MAIL_ADDRESS="ACCOUNT_E_MAIL_ADDRESS"
+declare -A RW_URLS_TO_CHECK=(
+["URL1"]="200 RECIPIENT_E_MAIL_ADDRESS"
+["URL2"]="200 RECIPIENT_E_MAIL_ADDRESS ANOTHER_RECIPIENT_E_MAIL_ADDRESS"
+...
+)
+```
+### Function rw_check_url
+Checks given url once and notifies all its recipients if its state has
+changed. An initially valid state is not notified.
+
+```bash
+>>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
+>>> rw.check_url https://domain.tld
+>>> echo "${RW_STATES[https://domain.tld]}"
+valid
+```
+```bash
+>>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
+>>> RW_DOCTEST_STATUS_CODE=503
+>>> rw.check_url https://domain.tld
+>>> echo "${RW_STATES[https://domain.tld]}"
+To: a@domain.tld
+Subject: NODE_NAME registers: "https://domain.tld" responses with invalid status code 503!
+invalid
+```
+```bash
+>>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
+>>> RW_DOCTEST_STATUS_CODE=000
+>>> rw.check_url https://domain.tld
+>>> echo "${RW_STATES[https://domain.tld]}"
+To: a@domain.tld
+Subject: NODE_NAME registers: "https://domain.tld" is not reachable!
+invalid
+```
+```bash
+>>> RW_URLS_TO_CHECK=(
+>>>     ["https://domain.tld/?a=b&c"]="200 a@domain.tld b@domain.tld"
+>>> )
+>>> rw.check_url "https://domain.tld/?a=b&c"
+>>> RW_DOCTEST_STATUS_CODE=500
+>>> rw.check_url "https://domain.tld/?a=b&c"
+>>> rw.check_url "https://domain.tld/?a=b&c"
+>>> RW_DOCTEST_STATUS_CODE=206
+>>> rw.check_url "https://domain.tld/?a=b&c"
+>>> rw.check_url "https://domain.tld/?a=b&c"
+To: a@domain.tld
+Subject: NODE_NAME registers: "https://domain.tld/?a=b&c" responses with invalid status code 500!
+To: b@domain.tld
+Subject: NODE_NAME registers: "https://domain.tld/?a=b&c" responses with invalid status code 500!
+To: a@domain.tld
+Subject: NODE_NAME registers: "https://domain.tld/?a=b&c" responses with valid status code 206.
+To: b@domain.tld
+Subject: NODE_NAME registers: "https://domain.tld/?a=b&c" responses with valid status code 206.
+```
+### Function rw_download
+Simply downloads missing modules.
+
+```bash
+>>> rw.download --silent https://domain.tld/path/to/file.ext; echo $?
+6
+```
+### Function rw_get_expected_status_code
+Determines the expected status code of given url configuration.
+
+```bash
+>>> rw.get_expected_status_code "200 a@domain.tld b@domain.tld"
+200
+```
+```bash
+>>> rw.get_expected_status_code "  206   a@domain.tld"
+206
+```
+```bash
+>>> rw.get_expected_status_code 404
+404
+```
+### Function rw_get_recipients
+Determines all recipients of given url configuration (one per line).
+
+```bash
+>>> rw.get_recipients "200 a@domain.tld  b@domain.tld"
+a@domain.tld
+b@domain.tld
+```
+```bash
+>>> rw.get_recipients 200 | wc --lines
+0
+```
+### Function rw_is_status_valid
+Checks if given and expected status codes results in valid state.
+
+```bash
+>>> rw.is_status_valid 200 200; echo $?
+0
+```
+```bash
+>>> rw.is_status_valid 200 "000"; echo $?
+1
+```
+```bash
+>>> rw.is_status_valid 200 0; echo $?
+1
+```
+```bash
+>>> rw.is_status_valid "000" 200; echo $?
+0
+```
+```bash
+>>> rw.is_status_valid "000" 206; echo $?
+0
+```
+```bash
+>>> rw.is_status_valid 206 "000"; echo $?
+1
+```
+```bash
+>>> rw.is_status_valid "000" "000"; echo $?
+0
+```
+```bash
+>>> rw.is_status_valid 206 200; echo $?
+0
+```
+```bash
+>>> rw.is_status_valid 200 206; echo $?
+0
+```
+```bash
+>>> rw.is_status_valid 201 206; echo $?
+1
+```
+```bash
+>>> rw.is_status_valid 206 201; echo $?
+1
+```
+```bash
+>>> rw.is_status_valid 201 506; echo $?
+1
+```
+### Function rw_main
+Main entry point: Checks all configured urls periodically.
+
+```bash
+>>> RW_URLS_TO_CHECK=(
+>>>     ["https://a.tld"]="200 a@domain.tld"
+>>>     ["https://b.tld"]="404 b@domain.tld"
+>>> )
+>>> sleep() { exit; }
+>>> rw.main
+To: b@domain.tld
+Subject: NODE_NAME registers: "https://b.tld" responses with invalid status code 200!
+```
+### Function rw_notify
+Sends an e-mail with given subject and message to given recipient.
+
+```bash
+>>> msmtp() { cat; }
+>>> RW_SENDER_E_MAIL_ADDRESS=sender@domain.tld
+>>> rw.notify a@domain.tld "A subject" "A message." | \
+>>>     grep --invert-match --extended-regexp "^(Date:.*)?$"
+From: sender@domain.tld
+To: a@domain.tld
+Reply-To: sender@domain.tld
+Subject: A subject
+A message.
+```
+```bash
+>>> msmtp() { grep "^Reply-To:"; }
+>>> RW_SENDER_E_MAIL_ADDRESS=sender@domain.tld
+>>> RW_REPLIER_E_MAIL_ADDRESS=replier@domain.tld
+>>> rw.notify a@domain.tld "A subject" "A message."
+Reply-To: replier@domain.tld
+```
+### Function rw_request_status_code
+Requests given url and prints the resulting status code ("000" if no
+response could be retrieved).
+
+```bash
+>>> rw.request_status_code https://domain.tld
+200
+```
+```bash
+>>> RW_DOCTEST_STATUS_CODE=503
+>>> rw.request_status_code https://domain.tld
+503
+```
+```bash
+>>> unset -f curl
+>>> rw.request_status_code http://127.0.0.1:1
+000
+```

@@ -12,7 +12,7 @@
     "online"
   ],
   "homepage": "https://tsickert.com/reachable-watcher",
-  "license": "CC-BY-3.0",
+  "license": "CC-BY-4.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thaibault/reachable-watcher.git"

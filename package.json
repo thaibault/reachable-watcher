@@ -32,8 +32,10 @@
     "test": "bash ./node_modules/.bin/bashlink-doctest --verbose ../../reachable-watcher",
     "update:documentation": "web-documentation"
   },
+  "dependencies": {
+    "bashlink": "^1.0.293"
+  },
   "devDependencies": {
-    "bashlink": "^1.0.293",
     "rimraf": "^6.1.4",
     "shellcheck": "^4.1.0",
     "web-documentation": "^1.0.74"

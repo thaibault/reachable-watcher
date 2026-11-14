@@ -11,22 +11,34 @@
 # See https://creativecommons.org/licenses/by/4.0/deed.de
 # endregion
 pkgname=reachable-watcher
-pkgver=1.0.14
-pkgrel=16
+pkgver=1.0.128
+pkgrel=1
 pkgdesc='Check status codes of web servers and sends notification e-mails'
 arch=(any)
-url=https://tsickert.com/reachableWatcher
+url=https://tsickert.com/reachable-watcher
 license=(CC-BY-4.0)
-depends=(bash curl grep coreutils)
+depends=(bash bash-link coreutils curl grep)
 optdepends=('msmtp: for automatic email notifications on missing sources')
 provides=(reachable-watcher)
-source=(reachableWatcher.sh reachableWatcher.service)
-md5sums=(SKIP SKIP)
+source=("https://registry.npmjs.org/reachable-watcher/-/reachable-watcher-${pkgver}.tgz")
+sha256sums=(2d2e846668407be3ba2ba55f49451ee8498b522a27c05fa7a7648fe24034d178)
 copy_to_aur=true
 
 package() {
-    install -D --mode 755 "${srcdir}/reachableWatcher.sh" \
+    cd "${srcdir}/package"
+    install \
+        -D \
+        --mode 755 \
+        reachable-watcher.sh \
         "${pkgdir}/usr/bin/reachable-watcher"
-    install -D --mode 644 "${srcdir}/reachableWatcher.service" \
-        "${pkgdir}/etc/systemd/system/reachable-watcher.service"
+    install \
+        -D \
+        --mode 644 \
+        reachable-watcher.service \
+        "${pkgdir}/usr/lib/systemd/system/reachable-watcher.service"
+    install \
+        -D \
+        --mode 644 \
+        readme.md \
+        "${pkgdir}/usr/share/doc/reachable-watcher/readme.md"
 }

@@ -57,38 +57,60 @@ and again when it recovers.
 Installation
 ------------
 
-Copy the script and the systemd unit into place and enable the service:
+On Arch Linux, build and install the "PKGBUILD" of this repository (it needs
+the "bash-link" package) and enable the service:
 <!--deDE:
-    Kopieren Sie das Skript und die systemd-Unit an ihren Platz und
-    aktivieren Sie den Dienst:
+    Unter Arch Linux bauen und installieren Sie das "PKGBUILD" dieses
+    Repositorys (es benötigt das Paket "bash-link") und aktivieren den
+    Dienst:
 -->
 <!--frFR:
-    Copiez le script et l'unité systemd à leur place et activez le service:
+    Sous Arch Linux, construisez et installez le "PKGBUILD" de ce dépôt (il
+    nécessite le paquet "bash-link") et activez le service:
 -->
 
 ```bash
-install -D --mode 755 reachable-watcher.sh /usr/bin/reachable-watcher
-install -D --mode 644 reachable-watcher.service \
-    /etc/systemd/system/reachable-watcher.service
+makepkg --install --syncdeps
 systemctl enable --now reachable-watcher
 ```
 
-The script needs "bash", "curl" and "msmtp" and downloads its library
-[bashlink](https://tsickert.com/bashlink) if it is not installed. It is also
-available via "npm install reachable-watcher".
-`journalctl -u reachable-watcher` shows what the service does.
+Anywhere else, install it globally via npm, which brings its library
+[bashlink](https://tsickert.com/bashlink) along, and link the shipped unit:
 <!--deDE:
-    Das Skript benötigt "bash", "curl" und "msmtp" und lädt seine Bibliothek
-    [bashlink](https://tsickert.com/bashlink) herunter, wenn sie nicht
-    installiert ist. Es ist auch über "npm install reachable-watcher"
-    erhältlich. `journalctl -u reachable-watcher` zeigt, was der Dienst
-    tut.
+    Überall sonst installieren Sie es global über npm, das seine Bibliothek
+    [bashlink](https://tsickert.com/bashlink) mitbringt, und verlinken die
+    mitgelieferte Unit:
 -->
 <!--frFR:
-    Le script nécessite "bash", "curl" et "msmtp" et télécharge sa
-    bibliothèque [bashlink](https://tsickert.com/bashlink) si elle n'est pas
-    installée. Il est aussi disponible via "npm install reachable-watcher".
-    `journalctl -u reachable-watcher` montre ce que fait le service.
+    Partout ailleurs, installez-le globalement via npm, qui apporte sa
+    bibliothèque [bashlink](https://tsickert.com/bashlink), et liez l'unité
+    fournie:
+-->
+
+```bash
+npm install --global reachable-watcher
+systemctl link \
+    "$(npm root --global)/reachable-watcher/reachable-watcher.service"
+systemctl enable --now reachable-watcher
+```
+
+The unit starts "reachable-watcher" from "/usr/local/bin" or "/usr/bin". The
+script alone works as well: it needs "bash" and "curl" and downloads bashlink
+on its first start if it is missing. E-mails need "msmtp".
+`journalctl -u reachable-watcher` shows what the service does.
+<!--deDE:
+    Die Unit startet "reachable-watcher" aus "/usr/local/bin" oder
+    "/usr/bin". Das Skript allein funktioniert ebenfalls: Es benötigt "bash"
+    und "curl" und lädt bashlink beim ersten Start herunter, wenn es fehlt.
+    E-Mails benötigen "msmtp". `journalctl -u reachable-watcher` zeigt, was
+    der Dienst tut.
+-->
+<!--frFR:
+    L'unité démarre "reachable-watcher" depuis "/usr/local/bin" ou
+    "/usr/bin". Le script seul fonctionne aussi: il nécessite "bash" et
+    "curl" et télécharge bashlink à son premier démarrage s'il manque. Les
+    e-mails nécessitent "msmtp". `journalctl -u reachable-watcher` montre ce
+    que fait le service.
 -->
 
 Configuration
@@ -117,7 +139,7 @@ declare -A RW_URLS_TO_CHECK=(
     ['https://example.com/missing']='404 admin@example.com dev@example.com'
 )
 # Optional settings with their defaults:
-RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS=300
+RW_DELAY_BETWEEN_TWO_CONSECUTIVE_REQUESTS_IN_SECONDS=300
 RW_NAME=NODE_NAME
 RW_REPLIER_E_MAIL_ADDRESS="$RW_SENDER_E_MAIL_ADDRESS"
 RW_VERBOSE=false
@@ -152,9 +174,20 @@ verified). The response is valid if:
     ne sont pas vérifiés). La réponse est valide si:
 -->
 
-- its status code equals the expected one,<!--deDE:ihr Statuscode dem erwarteten entspricht,--><!--frFR:son code de statut est égal à celui attendu,-->
-- both are one of "200" and "206" or<!--deDE:beide einer von "200" und "206" sind oder--><!--frFR:les deux font partie de "200" et "206" ou-->
-- "000" is expected (not reachable) and "000", "200" or "206" is returned.<!--deDE:"000" erwartet wird (nicht erreichbar) und "000", "200" oder "206" zurückkommt.--><!--frFR:"000" est attendu (inaccessible) et "000", "200" ou "206" est renvoyé.-->
+- its status code equals the expected one or<!--deDE:ihr Statuscode dem erwarteten entspricht oder--><!--frFR:son code de statut est égal à celui attendu ou-->
+- both are one of "200" and "206".<!--deDE:beide einer von "200" und "206" sind.--><!--frFR:les deux font partie de "200" et "206".-->
+
+An unreachable URL results in "000", which is only valid if "000" is expected,
+e.g. to make sure that an internal service stays hidden.
+<!--deDE:
+    Eine nicht erreichbare URL ergibt "000", was nur gültig ist, wenn "000"
+    erwartet wird, z. B. um sicherzustellen, dass ein interner Dienst
+    verborgen bleibt.
+-->
+<!--frFR:
+    Une URL inaccessible donne "000", ce qui n'est valide que si "000" est
+    attendu, par exemple pour s'assurer qu'un service interne reste caché.
+-->
 
 Recipients are only notified when the state of a URL changes, from valid to
 invalid or back. A URL which is valid on the first check sends nothing.

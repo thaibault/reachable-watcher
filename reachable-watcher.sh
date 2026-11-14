@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 # region header
-# [Project page](https://tsickert.com/reachableWatcher)
+# [Project page](https://tsickert.com/reachable-watcher)
 
 # Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
@@ -27,9 +27,16 @@ rw_download() {
     return $?
 }
 
-if [ -f "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh" ]; then
+# NOTE: Resolves symbolic links (e.g. "/usr/bin/reachable-watcher") to find
+# bashlink next to the real script location (installed via npm).
+declare -g RW_SCRIPT_PATH="$(
+    dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")/"
+if [ -f "${RW_SCRIPT_PATH}node_modules/bashlink/module.sh" ]; then
     # shellcheck disable=SC1090
-    source "$(dirname "${BASH_SOURCE[0]}")/node_modules/bashlink/module.sh"
+    source "${RW_SCRIPT_PATH}node_modules/bashlink/module.sh"
+elif [ -f "${RW_SCRIPT_PATH}../bashlink/module.sh" ]; then
+    # shellcheck disable=SC1090
+    source "${RW_SCRIPT_PATH}../bashlink/module.sh"
 elif [ -f "/usr/lib/bashlink/module.sh" ]; then
     # shellcheck disable=SC1091
     source "/usr/lib/bashlink/module.sh"
@@ -41,6 +48,8 @@ else
     if ! (
         [ -f "${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh" ] || \
         rw.download \
+            --show-error \
+            --silent \
             https://raw.githubusercontent.com/thaibault/bashlink/main/module.sh \
                 >"${BL_MODULE_REMOTE_MODULE_CACHE_PATH}/module.sh"
     ); then
@@ -127,7 +136,7 @@ declare -gr RW__DOCTEST_SETUP__='
 # Maps each url to its expected status code followed by its recipients.
 declare -Ag RW_URLS_TO_CHECK=()
 # Wait for 5 minutes (60 * 5 = 300).
-declare -ig RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS=300
+declare -ig RW_DELAY_BETWEEN_TWO_CONSECUTIVE_REQUESTS_IN_SECONDS=300
 declare -g RW_DATE_TIME_FORMAT='%T:%N at %d.%m.%Y'
 declare -g RW_SENDER_E_MAIL_ADDRESS=''
 # Falls back to the sender address when empty.
@@ -163,10 +172,10 @@ rw_is_status_valid() {
         1
 
         >>> rw.is_status_valid "000" 200; echo $?
-        0
+        1
 
         >>> rw.is_status_valid "000" 206; echo $?
-        0
+        1
 
         >>> rw.is_status_valid 206 "000"; echo $?
         1
@@ -192,13 +201,11 @@ rw_is_status_valid() {
     # NOTE: Given state "000" resolves to "0" as interpreted integer.
     local -ir expected_status_code=$1
     local -ir given_status_code=$2
-    local -ar valid_ok_codes=(0 200 206)
+    # NOTE: Status code "000" indicates that the url is not reachable and is
+    # therefore only valid if expected explicitly.
+    local -ar valid_ok_codes=(200 206)
     if (( expected_status_code == given_status_code )); then
         return 0
-    fi
-    # NOTE: Status code "000" indicates that the url is not reachable.
-    if (( given_status_code == 0 )); then
-        return 1
     fi
     if \
         bl.array.contains "$expected_status_code" "${valid_ok_codes[@]}" &&
@@ -412,8 +419,8 @@ rw_main() {
         for url in "${!RW_URLS_TO_CHECK[@]}"; do
             rw.check_url "$url"
         done
-        bl.logging.debug "Wait for $RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS seconds until next check."
-        sleep "$RW_DELAY_BETWEEN_TWO_CONSEQUTIVE_REQUESTS_IN_SECONDS"
+        bl.logging.debug "Wait for $RW_DELAY_BETWEEN_TWO_CONSECUTIVE_REQUESTS_IN_SECONDS seconds until next check."
+        sleep "$RW_DELAY_BETWEEN_TWO_CONSECUTIVE_REQUESTS_IN_SECONDS"
     done
 }
 # endregion

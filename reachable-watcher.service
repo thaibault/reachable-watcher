@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # region header
-# Copyright Torben Sickert (t.sickert["~at~"]gmail.com) 16.12.2012
+# Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
 # License
 # -------
@@ -18,7 +18,9 @@ After=network.target network-online.target
 [Service]
 Restart=always
 RestartSec=10
-ExecStart=/usr/bin/reachable-watcher
+# NOTE: A relative name is searched in "/usr/local/bin" and "/usr/bin" so that
+# global npm installations are found as well.
+ExecStart=reachable-watcher
 NotifyAccess=all
 
 [Install]

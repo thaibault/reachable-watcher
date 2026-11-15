@@ -11,7 +11,7 @@
 # See https://creativecommons.org/licenses/by/4.0/deed.de
 # endregion
 pkgname=reachable-watcher
-pkgver=1.0.128
+pkgver=1.0.129
 pkgrel=1
 pkgdesc='Check status codes of web servers and sends notification e-mails'
 arch=(any)

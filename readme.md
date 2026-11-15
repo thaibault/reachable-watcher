@@ -58,15 +58,15 @@ Installation
 ------------
 
 On Arch Linux, build and install the "PKGBUILD" of this repository (it needs
-the "bash-link" package) and enable the service:
+the "bashlink" package) and enable the service:
 <!--deDE:
     Unter Arch Linux bauen und installieren Sie das "PKGBUILD" dieses
-    Repositorys (es benötigt das Paket "bash-link") und aktivieren den
+    Repositorys (es benötigt das Paket "bashlink") und aktivieren den
     Dienst:
 -->
 <!--frFR:
     Sous Arch Linux, construisez et installez le "PKGBUILD" de ce dépôt (il
-    nécessite le paquet "bash-link") et activez le service:
+    nécessite le paquet "bashlink") et activez le service:
 -->
 
 ```bash

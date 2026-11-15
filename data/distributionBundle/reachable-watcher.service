@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # region header
-# Copyright Torben Sickert (t.sickert["~at~"]gmail.com) 16.12.2012
+# Copyright Torben Sickert (info["~at~"]tsickert.com) 16.12.2012
 
 # License
 # -------
 
 # This library written by Torben Sickert stands under a creative commons naming
-# 3.0 unported license. See https://creativecommons.org/licenses/by/3.0/deed.de
+# 4.0 international license.
+# See https://creativecommons.org/licenses/by/4.0/deed.de
 # endregion
 [Unit]
 Description=Checks server reachabilities.
@@ -17,7 +18,9 @@ After=network.target network-online.target
 [Service]
 Restart=always
 RestartSec=10
-ExecStart=/usr/bin/reachable-watcher
+# NOTE: A relative name is searched in "/usr/local/bin" and "/usr/bin" so that
+# global npm installations are found as well.
+ExecStart=reachable-watcher
 NotifyAccess=all
 
 [Install]

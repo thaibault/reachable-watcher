@@ -138,11 +138,11 @@ Checks if given and expected status codes results in valid state.
 ```
 ```bash
 >>> rw.is_status_valid "000" 200; echo $?
-0
+1
 ```
 ```bash
 >>> rw.is_status_valid "000" 206; echo $?
-0
+1
 ```
 ```bash
 >>> rw.is_status_valid 206 "000"; echo $?

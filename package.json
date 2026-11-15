@@ -33,7 +33,7 @@
     "update:documentation": "web-documentation"
   },
   "dependencies": {
-    "bashlink": "^1.0.293"
+    "bashlink": "^1.0.296"
   },
   "devDependencies": {
     "rimraf": "^6.1.4",

@@ -38,7 +38,7 @@
   "devDependencies": {
     "rimraf": "^6.1.4",
     "shellcheck": "^4.1.0",
-    "web-documentation": "^1.0.76"
+    "web-documentation": "^1.0.77"
   },
   "engines": {
     "node": ">=26",

@@ -157,45 +157,45 @@ fi
 declare -Ag RW_STATES=()
 # endregion
 # region helper
-alias rw.is_status_valid=rw_is_status_valid
+alias rw.is-status-valid=rw_is_status_valid
 rw_is_status_valid() {
     local -r __documentation__='
         Checks if given and expected status codes results in valid state.
 
-        >>> rw.is_status_valid 200 200; echo $?
+        >>> rw.is-status-valid 200 200; echo $?
         0
 
-        >>> rw.is_status_valid 200 "000"; echo $?
+        >>> rw.is-status-valid 200 "000"; echo $?
         1
 
-        >>> rw.is_status_valid 200 0; echo $?
+        >>> rw.is-status-valid 200 0; echo $?
         1
 
-        >>> rw.is_status_valid "000" 200; echo $?
+        >>> rw.is-status-valid "000" 200; echo $?
         1
 
-        >>> rw.is_status_valid "000" 206; echo $?
+        >>> rw.is-status-valid "000" 206; echo $?
         1
 
-        >>> rw.is_status_valid 206 "000"; echo $?
+        >>> rw.is-status-valid 206 "000"; echo $?
         1
 
-        >>> rw.is_status_valid "000" "000"; echo $?
+        >>> rw.is-status-valid "000" "000"; echo $?
         0
 
-        >>> rw.is_status_valid 206 200; echo $?
+        >>> rw.is-status-valid 206 200; echo $?
         0
 
-        >>> rw.is_status_valid 200 206; echo $?
+        >>> rw.is-status-valid 200 206; echo $?
         0
 
-        >>> rw.is_status_valid 201 206; echo $?
+        >>> rw.is-status-valid 201 206; echo $?
         1
 
-        >>> rw.is_status_valid 206 201; echo $?
+        >>> rw.is-status-valid 206 201; echo $?
         1
 
-        >>> rw.is_status_valid 201 506; echo $?
+        >>> rw.is-status-valid 201 506; echo $?
         1
     '
     # NOTE: Given state "000" resolves to "0" as interpreted integer.
@@ -215,34 +215,34 @@ rw_is_status_valid() {
     fi
     return 1
 }
-alias rw.get_expected_status_code=rw_get_expected_status_code
+alias rw.get-expected-status-code=rw_get_expected_status_code
 rw_get_expected_status_code() {
     local -r __documentation__='
         Determines the expected status code of given url configuration.
 
-        >>> rw.get_expected_status_code "200 a@domain.tld b@domain.tld"
+        >>> rw.get-expected-status-code "200 a@domain.tld b@domain.tld"
         200
 
-        >>> rw.get_expected_status_code "  206   a@domain.tld"
+        >>> rw.get-expected-status-code "  206   a@domain.tld"
         206
 
-        >>> rw.get_expected_status_code 404
+        >>> rw.get-expected-status-code 404
         404
     '
     local -a parts
     read -r -a parts <<<"$1"
     echo "${parts[0]}"
 }
-alias rw.get_recipients=rw_get_recipients
+alias rw.get-recipients=rw_get_recipients
 rw_get_recipients() {
     local -r __documentation__='
         Determines all recipients of given url configuration (one per line).
 
-        >>> rw.get_recipients "200 a@domain.tld  b@domain.tld"
+        >>> rw.get-recipients "200 a@domain.tld  b@domain.tld"
         a@domain.tld
         b@domain.tld
 
-        >>> rw.get_recipients 200 | wc --lines
+        >>> rw.get-recipients 200 | wc --lines
         0
     '
     local -a parts
@@ -251,21 +251,21 @@ rw_get_recipients() {
         printf '%s\n' "${parts[@]:1}"
     fi
 }
-alias rw.request_status_code=rw_request_status_code
+alias rw.request-status-code=rw_request_status_code
 rw_request_status_code() {
     local -r __documentation__='
         Requests given url and prints the resulting status code ("000" if no
         response could be retrieved).
 
-        >>> rw.request_status_code https://domain.tld
+        >>> rw.request-status-code https://domain.tld
         200
 
         >>> RW_DOCTEST_STATUS_CODE=503
-        >>> rw.request_status_code https://domain.tld
+        >>> rw.request-status-code https://domain.tld
         503
 
         >>> unset -f curl
-        >>> rw.request_status_code http://127.0.0.1:1
+        >>> rw.request-status-code http://127.0.0.1:1
         000
     '
     # NOTE: Declaring and assigning at once ignores the exit code of failing
@@ -318,20 +318,20 @@ EOF
 }
 # endregion
 # region controller
-alias rw.check_url=rw_check_url
+alias rw.check-url=rw_check_url
 rw_check_url() {
     local -r __documentation__='
         Checks given url once and notifies all its recipients if its state has
         changed. An initially valid state is not notified.
 
         >>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
-        >>> rw.check_url https://domain.tld
+        >>> rw.check-url https://domain.tld
         >>> echo "${RW_STATES[https://domain.tld]}"
         valid
 
         >>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
         >>> RW_DOCTEST_STATUS_CODE=503
-        >>> rw.check_url https://domain.tld
+        >>> rw.check-url https://domain.tld
         >>> echo "${RW_STATES[https://domain.tld]}"
         To: a@domain.tld
         Subject: NODE_NAME registers: "https://domain.tld" responses with invalid status code 503!
@@ -339,7 +339,7 @@ rw_check_url() {
 
         >>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
         >>> RW_DOCTEST_STATUS_CODE=000
-        >>> rw.check_url https://domain.tld
+        >>> rw.check-url https://domain.tld
         >>> echo "${RW_STATES[https://domain.tld]}"
         To: a@domain.tld
         Subject: NODE_NAME registers: "https://domain.tld" is not reachable!
@@ -348,13 +348,13 @@ rw_check_url() {
         >>> RW_URLS_TO_CHECK=(
         >>>     ["https://domain.tld/?a=b&c"]="200 a@domain.tld b@domain.tld"
         >>> )
-        >>> rw.check_url "https://domain.tld/?a=b&c"
+        >>> rw.check-url "https://domain.tld/?a=b&c"
         >>> RW_DOCTEST_STATUS_CODE=500
-        >>> rw.check_url "https://domain.tld/?a=b&c"
-        >>> rw.check_url "https://domain.tld/?a=b&c"
+        >>> rw.check-url "https://domain.tld/?a=b&c"
+        >>> rw.check-url "https://domain.tld/?a=b&c"
         >>> RW_DOCTEST_STATUS_CODE=206
-        >>> rw.check_url "https://domain.tld/?a=b&c"
-        >>> rw.check_url "https://domain.tld/?a=b&c"
+        >>> rw.check-url "https://domain.tld/?a=b&c"
+        >>> rw.check-url "https://domain.tld/?a=b&c"
         To: a@domain.tld
         Subject: NODE_NAME registers: "https://domain.tld/?a=b&c" responses with invalid status code 500!
         To: b@domain.tld
@@ -367,12 +367,12 @@ rw_check_url() {
     local -r url="$1"
     local -r configuration="${RW_URLS_TO_CHECK[$url]}"
     local -ir expected_status_code="$(
-        rw.get_expected_status_code "$configuration")"
+        rw.get-expected-status-code "$configuration")"
     bl.logging.debug "Check url \"$url\" for status code $expected_status_code."
-    local -ir given_status_code="$(rw.request_status_code "$url")"
+    local -ir given_status_code="$(rw.request-status-code "$url")"
     local -r now="$(date +"$RW_DATE_TIME_FORMAT")"
     local state message subject
-    if rw.is_status_valid "$expected_status_code" "$given_status_code"; then
+    if rw.is-status-valid "$expected_status_code" "$given_status_code"; then
         state=valid
         message="Requested URL \"$url\" returns valid status code $given_status_code on ${now}."
         subject="$RW_NAME registers: \"$url\" responses with valid status code ${given_status_code}."
@@ -394,7 +394,7 @@ rw_check_url() {
     fi
     bl.logging.info "Status has changed to \"$state\" for \"$url\". Do notification."
     local recipient
-    for recipient in $(rw.get_recipients "$configuration"); do
+    for recipient in $(rw.get-recipients "$configuration"); do
         rw.notify "$recipient" "$subject" "$message"
     done
 }
@@ -413,22 +413,22 @@ rw_main() {
         Subject: NODE_NAME registers: "https://b.tld" responses with invalid status code 200!
     '
     $RW_VERBOSE && \
-        bl.logging.set_level info
+        bl.logging.set-level info
     while true; do
         local url
         for url in "${!RW_URLS_TO_CHECK[@]}"; do
-            rw.check_url "$url"
+            rw.check-url "$url"
         done
         bl.logging.debug "Wait for $RW_DELAY_BETWEEN_TWO_CONSECUTIVE_REQUESTS_IN_SECONDS seconds until next check."
         sleep "$RW_DELAY_BETWEEN_TWO_CONSECUTIVE_REQUESTS_IN_SECONDS"
     done
 }
 # endregion
-if bl.tools.is_main; then
+if bl.tools.is-main; then
     bl.exception.activate
     bl.exception.try
         rw.main "$@"
-    bl.exception.catch_single
+    bl.exception.catch-single
     # region clean up
     {
         [ -f "$BL_MODULE_NAME_RESOLVING_CACHE_FILE_PATH" ] && \

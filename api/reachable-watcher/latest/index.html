@@ -45,14 +45,14 @@ changed. An initially valid state is not notified.
 
 ```bash
 >>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
->>> rw.check_url https://domain.tld
+>>> rw.check-url https://domain.tld
 >>> echo "${RW_STATES[https://domain.tld]}"
 valid
 ```
 ```bash
 >>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
 >>> RW_DOCTEST_STATUS_CODE=503
->>> rw.check_url https://domain.tld
+>>> rw.check-url https://domain.tld
 >>> echo "${RW_STATES[https://domain.tld]}"
 To: a@domain.tld
 Subject: NODE_NAME registers: "https://domain.tld" responses with invalid status code 503!
@@ -61,7 +61,7 @@ invalid
 ```bash
 >>> RW_URLS_TO_CHECK=(["https://domain.tld"]="200 a@domain.tld")
 >>> RW_DOCTEST_STATUS_CODE=000
->>> rw.check_url https://domain.tld
+>>> rw.check-url https://domain.tld
 >>> echo "${RW_STATES[https://domain.tld]}"
 To: a@domain.tld
 Subject: NODE_NAME registers: "https://domain.tld" is not reachable!
@@ -71,13 +71,13 @@ invalid
 >>> RW_URLS_TO_CHECK=(
 >>>     ["https://domain.tld/?a=b&c"]="200 a@domain.tld b@domain.tld"
 >>> )
->>> rw.check_url "https://domain.tld/?a=b&c"
+>>> rw.check-url "https://domain.tld/?a=b&c"
 >>> RW_DOCTEST_STATUS_CODE=500
->>> rw.check_url "https://domain.tld/?a=b&c"
->>> rw.check_url "https://domain.tld/?a=b&c"
+>>> rw.check-url "https://domain.tld/?a=b&c"
+>>> rw.check-url "https://domain.tld/?a=b&c"
 >>> RW_DOCTEST_STATUS_CODE=206
->>> rw.check_url "https://domain.tld/?a=b&c"
->>> rw.check_url "https://domain.tld/?a=b&c"
+>>> rw.check-url "https://domain.tld/?a=b&c"
+>>> rw.check-url "https://domain.tld/?a=b&c"
 To: a@domain.tld
 Subject: NODE_NAME registers: "https://domain.tld/?a=b&c" responses with invalid status code 500!
 To: b@domain.tld
@@ -98,78 +98,78 @@ Simply downloads missing modules.
 Determines the expected status code of given url configuration.
 
 ```bash
->>> rw.get_expected_status_code "200 a@domain.tld b@domain.tld"
+>>> rw.get-expected-status-code "200 a@domain.tld b@domain.tld"
 200
 ```
 ```bash
->>> rw.get_expected_status_code "  206   a@domain.tld"
+>>> rw.get-expected-status-code "  206   a@domain.tld"
 206
 ```
 ```bash
->>> rw.get_expected_status_code 404
+>>> rw.get-expected-status-code 404
 404
 ```
 ### Function rw_get_recipients
 Determines all recipients of given url configuration (one per line).
 
 ```bash
->>> rw.get_recipients "200 a@domain.tld  b@domain.tld"
+>>> rw.get-recipients "200 a@domain.tld  b@domain.tld"
 a@domain.tld
 b@domain.tld
 ```
 ```bash
->>> rw.get_recipients 200 | wc --lines
+>>> rw.get-recipients 200 | wc --lines
 0
 ```
 ### Function rw_is_status_valid
 Checks if given and expected status codes results in valid state.
 
 ```bash
->>> rw.is_status_valid 200 200; echo $?
+>>> rw.is-status-valid 200 200; echo $?
 0
 ```
 ```bash
->>> rw.is_status_valid 200 "000"; echo $?
+>>> rw.is-status-valid 200 "000"; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid 200 0; echo $?
+>>> rw.is-status-valid 200 0; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid "000" 200; echo $?
+>>> rw.is-status-valid "000" 200; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid "000" 206; echo $?
+>>> rw.is-status-valid "000" 206; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid 206 "000"; echo $?
+>>> rw.is-status-valid 206 "000"; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid "000" "000"; echo $?
+>>> rw.is-status-valid "000" "000"; echo $?
 0
 ```
 ```bash
->>> rw.is_status_valid 206 200; echo $?
+>>> rw.is-status-valid 206 200; echo $?
 0
 ```
 ```bash
->>> rw.is_status_valid 200 206; echo $?
+>>> rw.is-status-valid 200 206; echo $?
 0
 ```
 ```bash
->>> rw.is_status_valid 201 206; echo $?
+>>> rw.is-status-valid 201 206; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid 206 201; echo $?
+>>> rw.is-status-valid 206 201; echo $?
 1
 ```
 ```bash
->>> rw.is_status_valid 201 506; echo $?
+>>> rw.is-status-valid 201 506; echo $?
 1
 ```
 ### Function rw_main
@@ -211,16 +211,16 @@ Requests given url and prints the resulting status code ("000" if no
 response could be retrieved).
 
 ```bash
->>> rw.request_status_code https://domain.tld
+>>> rw.request-status-code https://domain.tld
 200
 ```
 ```bash
 >>> RW_DOCTEST_STATUS_CODE=503
->>> rw.request_status_code https://domain.tld
+>>> rw.request-status-code https://domain.tld
 503
 ```
 ```bash
 >>> unset -f curl
->>> rw.request_status_code http://127.0.0.1:1
+>>> rw.request-status-code http://127.0.0.1:1
 000
 ```
